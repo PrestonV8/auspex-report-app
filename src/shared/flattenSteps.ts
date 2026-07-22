@@ -3,6 +3,7 @@ import type { TrendStep } from "./types.js";
 
 /*
  * Helper function to recursively flatten each step into a TrendStep object 
+ * This is for step 3 of the onTestEnd() method
  */
 export function flattenSteps(steps: TestStep[], level: number = 0): TrendStep[] {
     const result: TrendStep[] = [];
