@@ -1,7 +1,10 @@
 import type { Reporter, TestCase, TestResult, FullConfig, Suite, FullResult } from "@playwright/test/reporter";
 import fs from "node:fs";
-import { RunTotals, TrendStep } from "../shared/types.js";
+import { RunTotals, TrendEntry } from "../shared/types.js";
 import { flattenSteps } from "../shared/flattenSteps.js";
+import { joinOutput } from "../shared/joinOutput.js";
+import stripAnsi from "strip-ansi"
+import slugify from "slugify";
 
 export default class InsightsReporter implements Reporter {
     private runId: string = "";
@@ -32,12 +35,34 @@ export default class InsightsReporter implements Reporter {
      * 5. JSONL append - serialises TrendEntry and appends to data/YYYY-MM-DD.jsonl via appendFileSync.
      */
     onTestEnd(test: TestCase, result: TestResult) {
-        const isFlaky: boolean = result.status === "passed" && result.retry > 0;
-        
+        // Step 1
         if (result.status === "skipped") {
             this.runTotals.skipped++;
             return;
         }
+
+        // Step 2
+        const isFlaky: boolean = result.status === "passed" && result.retry > 0;
+
+        // Step 5
+        const entry: TrendEntry = {
+            duration: result.duration,
+            flaky: isFlaky,
+            status: result.status,
+            retries: result.retry,
+            workerIndex: result.workerIndex,
+            tags: test.tags,
+            project: test.parent.project()?.name ?? "unknown",
+            title: test.titlePath().join(" > "),
+            runId: this.runId,
+            ts: new Date().toISOString(), // create a new timestamp
+            date: new Date().toISOString().slice(0,10),
+            errorMessage: stripAnsi(result.errors[0]?.message ?? "").slice(0, 500),
+            stdout: joinOutput(result.stdout, 10000),
+            stderr: joinOutput(result.stderr, 5000),
+            steps: flattenSteps(result.steps),
+            testId: slugify(test.titlePath().join(" > "), { lower: true })
+        };
         
     }
 

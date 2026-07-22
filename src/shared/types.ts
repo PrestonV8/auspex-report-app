@@ -12,6 +12,7 @@ export interface TrendEntry {
     retries: number; 
     errorMessage: string; 
     stdout: string;
+    stderr: string;
     workerIndex: number;
     steps: TrendStep[];
 }
