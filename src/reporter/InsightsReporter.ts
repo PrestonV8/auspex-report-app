@@ -1,6 +1,7 @@
 import type { Reporter, TestCase, TestResult, FullConfig, Suite, FullResult } from "@playwright/test/reporter";
 import fs from "node:fs";
-import { RunTotals } from "../shared/types.js";
+import { RunTotals, TrendStep } from "../shared/types.js";
+import { flattenSteps } from "../shared/flattenSteps.js";
 
 export default class InsightsReporter implements Reporter {
     private runId: string = "";
@@ -44,3 +45,4 @@ export default class InsightsReporter implements Reporter {
 
     }
 }
+
