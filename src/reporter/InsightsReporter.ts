@@ -26,12 +26,18 @@ export default class InsightsReporter implements Reporter {
      * The process when the testing period ends and what to do with the results.
      * 1. Skip check - skipped tests increment counter and return early
      * 2. Flaky detection - results.status == "passed" && result.retry > 0.
-     * 3. Step flattening - flattenSteps(result.steps) recursively walks step tree to record title, durationMs, level, category, stepError
+     * 3. Step flattening - flattenSteps(result.steps) recursively walks step tree to record title, durationMs, level, category, stepError from nested tree to flat array
      * 4. Stdout/stderr capture - joins buffer arrays, strips ANSI codes, truncates to 10 000 / 5 000 chars.
      * 5. JSONL append - serialises TrendEntry and appends to data/YYYY-MM-DD.jsonl via appendFileSync.
      */
     onTestEnd(test: TestCase, result: TestResult) {
-
+        const isFlaky: boolean = result.status === "passed" && result.retry > 0;
+        
+        if (result.status === "skipped") {
+            this.runTotals.skipped++;
+            return;
+        }
+        
     }
 
     onEnd(result: FullResult) {
