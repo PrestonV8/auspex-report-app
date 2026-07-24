@@ -1,6 +1,6 @@
 import type { Reporter, TestCase, TestResult, FullConfig, Suite, FullResult } from "@playwright/test/reporter";
 import fs from "node:fs";
-import { RunTotals, TrendEntry } from "../shared/types.js";
+import { RunTotals, TrendEntry, RunEnvironment, RunExecutor, RunMetadata } from "../shared/types.js";
 import { flattenSteps } from "../shared/flattenSteps.js";
 import { joinOutput } from "../shared/joinOutput.js";
 import stripAnsi from "strip-ansi"
@@ -89,7 +89,62 @@ export default class InsightsReporter implements Reporter {
     }
 
     onEnd(result: FullResult) {
+        const now = new Date();
+        const nowMs = now.getTime();
+        const endTs = now.toISOString();
+        const startMs = new Date(this.runStartTs).getTime();
 
+        const durationMs = nowMs - startMs;
+
+        let environment: RunEnvironment = { Environment: "unknown", Branch: "unknown" };
+
+        try {
+            const raw = fs.readFileSync("allure-results/environment.properties", "utf-8");
+            const lines = raw.split("\n");
+
+            for (const line of lines) {
+                const parts = line.split("=");
+                const key = parts[0];
+                const value = parts[1];
+
+                if (key === "Environment") {
+                    environment.Environment = value;
+                } else if (key === "Branch") {
+                    environment.Branch = value;
+                }
+            }
+        } catch {
+            
+        }
+
+        let executor: RunExecutor = { name: "unknown", type: "unknown", buildName: "unknown" };
+
+        try {
+            const raw = fs.readFileSync("allure-results/executor.json", "utf-8");
+            executor = JSON.parse(raw);
+        } catch {
+            try {
+                const raw = fs.readFileSync("allure-config/executor.json", "utf-8");
+                executor = JSON.parse(raw);
+            } catch {
+
+            }
+        }
+
+        // assembling a RunMetadata object and writing it to disk
+        const metadata: RunMetadata = {
+            runId: this.runId,
+            date: this.runDate,
+            ts: this.runStartTs,
+            endTs: endTs,
+            durationMs: durationMs,
+            runStatus: result.status === "timedout" ? "timedOut" : result.status,
+            environment: environment,
+            executor: executor,
+            totals: this.runTotals,
+        };
+
+        // finally, creating a new file for the report
+        fs.writeFileSync(`./data/runs/${this.runId}.json`, JSON.stringify(metadata));
     }
 }
-
