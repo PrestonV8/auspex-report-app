@@ -44,6 +44,9 @@ export default class InsightsReporter implements Reporter {
         // Step 2
         const isFlaky: boolean = result.status === "passed" && result.retry > 0;
 
+        // get the date of when the test ended
+        const today = new Date().toISOString().slice(0, 10);
+
         // Step 5
         const entry: TrendEntry = {
             duration: result.duration,
@@ -56,7 +59,7 @@ export default class InsightsReporter implements Reporter {
             title: test.titlePath().join(" > "),
             runId: this.runId,
             ts: new Date().toISOString(), // create a new timestamp
-            date: new Date().toISOString().slice(0,10),
+            date: today,
             errorMessage: stripAnsi(result.errors[0]?.message ?? "").slice(0, 500),
             stdout: joinOutput(result.stdout, 10000),
             stderr: joinOutput(result.stderr, 5000),
@@ -64,6 +67,25 @@ export default class InsightsReporter implements Reporter {
             testId: slugify(test.titlePath().join(" > "), { lower: true })
         };
         
+        this.runTotals.total++;
+
+        switch (result.status) {
+            case "passed":
+                this.runTotals.passed++;
+                break;
+            case "failed":
+                this.runTotals.failed++;
+                break;
+            case "timedOut":
+                this.runTotals.timedOut++;
+                break;
+        }
+
+        if (isFlaky === true) {
+            this.runTotals.flaky++;
+        }
+
+        fs.appendFileSync(`data/${today}.jsonl`, JSON.stringify(entry) + "\n");
     }
 
     onEnd(result: FullResult) {
