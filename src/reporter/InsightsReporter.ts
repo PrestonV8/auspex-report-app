@@ -88,6 +88,9 @@ export default class InsightsReporter implements Reporter {
         fs.appendFileSync(`data/${today}.jsonl`, JSON.stringify(entry) + "\n");
     }
 
+    /**
+     * for when the entire run ends, write a JSON report of the run's results and create a new file into `data\runs`
+     */
     onEnd(result: FullResult) {
         const now = new Date();
         const nowMs = now.getTime();

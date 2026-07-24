@@ -8,6 +8,11 @@ This is a light-weight Playwright report dashboard. Users will be able to see th
 ## Features:
 KPI Row
 
+## Test Commands:
+For running all the playwright tests in the environment
+```bash
+npx playwright test
+```
 
 ## Tech Stack:
 - Node.js
