@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { TrendEntry } from "../shared/types.js";
+import { TrendEntry, RunMetadata } from "../shared/types.js";
 
 /***
  * Step 1 of Dashboard Generation Flow
@@ -27,5 +27,21 @@ for (const filePath of files) {
 
 }
 
-// to print the output of the parsing
+// to print the output of the parsing of result
 //console.log(result);
+
+const runFiles = fs.globSync("data/runs/*.json");
+const runs: RunMetadata[] = [];
+
+for (const filePath of runFiles) {
+    const raw = fs.readFileSync(filePath, "utf-8");
+
+    // if the line is not an empty string, do this
+    if (raw !== "") {
+        const currentRun = JSON.parse(raw);
+        runs.push(currentRun);
+    }
+}
+
+// to print the output of the parsing of runs
+// console.log(runs);
