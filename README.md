@@ -14,6 +14,11 @@ For running all the playwright tests in the environment
 npx playwright test
 ```
 
+For testing the parsing in loadData.ts
+```bash
+npx tsx src/dashboard/loadData.ts
+```
+
 ## Tech Stack:
 - Node.js
 - TypeScript
