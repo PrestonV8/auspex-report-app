@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import { TrendEntry, RunMetadata } from "../shared/types.js";
+import minimist from "minimist"; // node package to parse process.argv into a clean, named object automatically
 
 /***
  * Step 1 of Dashboard Generation Flow
@@ -54,4 +55,7 @@ export function loadRuns(): RunMetadata[] {
     return runs;
 }
 
+// used to filter the entries by amount of days since current day. Default is over the past 30 days
+const daysArg = minimist(process.argv.slice(2)).days ?? 30;
 
+console.log(daysArg);
