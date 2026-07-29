@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import { TrendEntry, RunMetadata } from "../shared/types.js";
-import minimist from "minimist"; // node package to parse process.argv into a clean, named object automatically
 
 /***
  * Step 1 of Dashboard Generation Flow
@@ -10,9 +9,9 @@ import minimist from "minimist"; // node package to parse process.argv into a cl
  * 3. parse each line as JSON
  * 4. Collect every parsed entry, from every file, into one big combined array
  */
-export function loadTrendEntries(): TrendEntry[] {
+export function loadTrendEntries(daysArg: number): TrendEntry[] {
     const files = fs.globSync("data/*.jsonl");
-    const result: TrendEntry[] = [];
+    let result: TrendEntry[] = [];
 
     for (const filePath of files) {
         const raw = fs.readFileSync(filePath, "utf-8");
@@ -30,15 +29,23 @@ export function loadTrendEntries(): TrendEntry[] {
     // to print the output of the parsing of result
     //console.log(result);
 
+
+    // calculate the x amount of days since today
+    const cutOffDate = getCutoffDate(daysArg);
+
+    // filter result based on the determined offset days
+    result = result.filter((entry) => {
+        return entry.date >= cutOffDate;
+    });
     return result;
 }
 
 
 
 
-export function loadRuns(): RunMetadata[] {
+export function loadRuns(daysArg: number): RunMetadata[] {
     const runFiles = fs.globSync("data/runs/*.json");
-    const runs: RunMetadata[] = [];
+    let runs: RunMetadata[] = [];
 
     for (const filePath of runFiles) {
         const raw = fs.readFileSync(filePath, "utf-8");
@@ -52,10 +59,25 @@ export function loadRuns(): RunMetadata[] {
 
     // to print the output of the parsing of runs
     // console.log(runs);
+
+    // calculate the x amount of days since today
+    const cutOffDate = getCutoffDate(daysArg);
+
+    runs = runs.filter((entry) => {
+        return entry.date >= cutOffDate;
+    });
+
     return runs;
 }
 
-// used to filter the entries by amount of days since current day. Default is over the past 30 days
-const daysArg = minimist(process.argv.slice(2)).days ?? 30;
+// FOR DEBUGGING: Shows the days argument
+//console.log(daysArg);
 
-console.log(daysArg);
+// Helper functiont to calculate the cut off date to retrieve reports
+function getCutoffDate(daysArg: number): string {
+    const milliSecondsPerDay = 24 * 60 * 60 * 1000; // hours * minutes * minutes * milliseconds
+    const cutOffMs = new Date().getTime() - (milliSecondsPerDay * daysArg);
+    const cutOffDate = new Date(cutOffMs).toISOString().slice(0,10);
+
+    return cutOffDate;
+}
