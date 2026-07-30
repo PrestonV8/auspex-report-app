@@ -33,3 +33,17 @@ export function calculatePassRates(grouped: Record<string, TrendEntry[]>): Recor
 
     return passRates;
 }
+
+
+export function renderPassRateTable(passRates: Record<string, number>): string {
+    const rows = Object.entries(passRates).map(([runId, rate]) => {
+        return `<tr>
+                <td>${runId}</td>
+                <td>${Math.round(rate)}%</td>
+                </tr>`;
+    }).join("");
+
+    const table = `<table>${rows}</table>`;
+
+    return table;
+}

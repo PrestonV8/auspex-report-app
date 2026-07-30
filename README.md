@@ -19,6 +19,11 @@ For testing the parsing in loadData.ts
 npx tsx src/dashboard/loadData.ts
 ```
 
+For testing the dashboard creation of Playwright tests
+```bash
+start src/dashboard/insights.html
+```
+
 ## Tech Stack:
 - Node.js
 - TypeScript
