@@ -1,3 +1,4 @@
+// For all the computation and calculations the dashboard needs
 import { TrendEntry } from "../shared/types.js";
 import { loadTrendEntries } from "./loadData.js";
 
@@ -34,16 +35,17 @@ export function calculatePassRates(grouped: Record<string, TrendEntry[]>): Recor
     return passRates;
 }
 
+export function calculateAveragePassRate(passRates: Record<string, number>): number {
+    const values = Object.values(passRates);
 
-export function renderPassRateTable(passRates: Record<string, number>): string {
-    const rows = Object.entries(passRates).map(([runId, rate]) => {
-        return `<tr>
-                <td>${runId}</td>
-                <td>${Math.round(rate)}%</td>
-                </tr>`;
-    }).join("");
+    let sum = 0;
+    for (const value of values) {
+        sum += value;
+    }
 
-    const table = `<table>${rows}</table>`;
+    const averagePassRate = sum / values.length;
 
-    return table;
+    return averagePassRate;
 }
+
+

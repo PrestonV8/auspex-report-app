@@ -81,3 +81,6 @@ function getCutoffDate(daysArg: number): string {
 
     return cutOffDate;
 }
+
+// indicates that the file has been ran
+console.log("SUCCESS: loadData.ts");
