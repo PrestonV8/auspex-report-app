@@ -33,6 +33,7 @@ fs.writeFileSync(`./src/dashboard/insights.html`, dashboard);
 
 console.log("SUCCESS: insights-dashboard.ts");
 
+// check whether the CLI command intends to open the HTML file after generation
 const shouldOpen = minimist(process.argv.slice(2)).open;
 if (shouldOpen === true) {
     // check the user's OS

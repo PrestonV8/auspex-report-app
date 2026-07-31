@@ -19,10 +19,13 @@ For testing the parsing in loadData.ts
 npx tsx src/dashboard/loadData.ts
 ```
 
-For running the pipeline for dashboard creation of Playwright tests
+Generate and open the dashboard
 ```bash
-npx tsx src/dashboard/insights-dashboard.ts
-start src/dashboard/insights.html
+# Generate only (for CI artifact upload)
+npm run insights:dashboard
+
+# Generate and open in default browser (local dev)
+npm run insights:dashboard: open
 ```
 
 ## Tech Stack:
