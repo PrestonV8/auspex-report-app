@@ -2,14 +2,17 @@
 import { TrendEntry } from "../shared/types.js";
 import { loadTrendEntries } from "./loadData.js";
 
+
+type GroupableField = "runId" | "testId";
+
 // Helper function to group the entries into Key Value pairs
-export function groupEntries(entries: TrendEntry[]): Record<string, TrendEntry[]> {
+export function groupEntries(entries: TrendEntry[], field: GroupableField): Record<string, TrendEntry[]> {
     const grouped: Record<string, TrendEntry[]> = {};
     for (const entry of entries) {
-        if (!grouped[entry.runId]) {
-            grouped[entry.runId] = [];
+        if (!grouped[entry[field]]) {
+            grouped[entry[field]] = [];
         }
-        grouped[entry.runId].push(entry);
+        grouped[entry[field]].push(entry);
     }
 
     return grouped;

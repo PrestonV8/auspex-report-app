@@ -19,7 +19,7 @@ For testing the parsing in loadData.ts
 npx tsx src/dashboard/loadData.ts
 ```
 
-For testing the dashboard creation of Playwright tests
+For running the pipeline for dashboard creation of Playwright tests
 ```bash
 npx tsx src/dashboard/insights-dashboard.ts
 start src/dashboard/insights.html

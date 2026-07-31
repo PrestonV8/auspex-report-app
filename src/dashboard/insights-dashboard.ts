@@ -14,7 +14,7 @@ const daysArg = minimist(process.argv.slice(2)).days ?? 30;
 
 // generate the sequence in which to create the dashboard
 const entries = loadTrendEntries(daysArg);
-const grouped = groupEntries(entries);
+const grouped = groupEntries(entries, "runId");
 const passRates = calculatePassRates(grouped);
 const averagePassRate = calculateAveragePassRate(passRates);
 const passRateTable = renderPassRateTable(passRates, averagePassRate);
