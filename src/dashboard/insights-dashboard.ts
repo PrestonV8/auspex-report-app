@@ -3,7 +3,7 @@ import { loadTrendEntries, loadRuns } from "./loadData.js";
 import { TrendEntry } from "../shared/types.js";
 import { groupEntries, calculatePassRates, calculateAveragePassRate } from "./analytics.js";
 import fs from "node:fs";
-import { renderPassRateTable } from "./render.js";
+import { renderPassRateTable, renderPage } from "./render.js";
 
 
 // used to filter the entries by amount of days since current dat. Default is over the past 30 days
@@ -18,5 +18,6 @@ const grouped = groupEntries(entries);
 const passRates = calculatePassRates(grouped);
 const averagePassRate = calculateAveragePassRate(passRates);
 const passRateTable = renderPassRateTable(passRates, averagePassRate);
+const dashboard = renderPage(passRateTable);
 
-fs.writeFileSync(`./src/dashboard/insights.html`, passRateTable);
+fs.writeFileSync(`./src/dashboard/insights.html`, dashboard);
