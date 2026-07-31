@@ -25,7 +25,7 @@ Generate and open the dashboard
 npm run insights:dashboard
 
 # Generate and open in default browser (local dev)
-npm run insights:dashboard: open
+npm run insights:dashboard:open
 ```
 
 ## Tech Stack:
