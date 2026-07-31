@@ -2,6 +2,7 @@ import minimist from "minimist";
 import { loadTrendEntries, loadRuns } from "./loadData.js";
 import { groupEntries, calculatePassRates, calculateAveragePassRate, calculateFlakyLeaderboard } from "./analytics.js";
 import fs from "node:fs";
+import { exec } from "node:child_process";
 import { renderPassRateTable, renderPage, renderFlakyLeaderboard } from "./render.js";
 
 
@@ -29,3 +30,25 @@ const dashboardContent = passRateTable + flakyLeaderboard;
 const dashboard = renderPage(dashboardContent);
 
 fs.writeFileSync(`./src/dashboard/insights.html`, dashboard);
+
+console.log("SUCCESS: insights-dashboard.ts");
+
+const shouldOpen = minimist(process.argv.slice(2)).open;
+if (shouldOpen === true) {
+    // check the user's OS
+    const operatingSystem = process.platform;
+    let command = "";
+
+    if (operatingSystem === "win32") {
+        command = "start";
+    } 
+    else if (operatingSystem === "darwin") {
+        command = "open";
+    }
+    else {
+        command = "xdg-open";
+    }
+
+    exec(`${command} ./src/dashboard/insights.html`);
+}
+

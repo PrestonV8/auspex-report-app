@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx"
+    "dev": "tsx",
+    "insights:dashboard": "npx tsx src/dashboard/insights-dashboard.ts",
+    "insights:dashboard:open": "npx tsx src/dashboard/insights-dashboard.ts --open"
   },
   "keywords": [],
   "author": "",
