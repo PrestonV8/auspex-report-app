@@ -15,6 +15,10 @@ export function renderPassRateTable(passRates: Record<string, number>, averagePa
     return headline + table;
 }
 
+export function renderFlakyLeaderboard(results: { testId: string, flakyCount: number, failCount: number }[]): string {
+
+}
+
 export function renderPage(content: string): string {
     return `<!DOCTYPE html>
     <html lang="en">
