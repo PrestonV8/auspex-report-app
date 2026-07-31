@@ -12,7 +12,7 @@ export function renderPassRateTable(passRates: Record<string, number>, averagePa
     const headline = `<p>Average pass rate across ${runCount} runs: ${Math.round(averagePassRate)}%</p>`;
     const table = `<table>${rows}</table>`;
 
-    return headline + table;
+    return `<section class="panel">${headline}${table}</section>`;
 }
 
 // function to generate the flakyness leaderboard
@@ -28,7 +28,7 @@ export function renderFlakyLeaderboard(results: { testId: string, flakyCount: nu
     const table = `<h2>Flaky Leaderboard</h2>
     <table>${rows}</table>`
 
-    return table;
+    return `<section class="panel">${table}</section>`
 }
 
 export function renderPage(content: string): string {
@@ -48,6 +48,10 @@ table { width: 100%; border-collapse: collapse; background: #fff; border-radius:
 th, td { padding: 10px 16px; text-align: left; border-bottom: 1px solid #e0e0e0; }
 tr:last-child td { border-bottom: none; }
 tr:hover { background: #fafafa; }
+.panel { background: #fff; border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.panel table { box-shadow: none; }
+.panel h2 { font-size: 1.15rem; margin-bottom: 12px; color: #CC0000; }
+.panel p { margin-bottom: 12px; }
     </style>
     </head>
     <body>
