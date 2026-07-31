@@ -15,8 +15,20 @@ export function renderPassRateTable(passRates: Record<string, number>, averagePa
     return headline + table;
 }
 
+// function to generate the flakyness leaderboard
 export function renderFlakyLeaderboard(results: { testId: string, flakyCount: number, failCount: number }[]): string {
+    const rows = results.map((entry) => {
+        return `<tr>
+        <td>${entry.testId}</td>
+        <td>${entry.flakyCount}</td>
+        <td>${entry.failCount}</td>
+                </tr>`;
+    }).join("");
 
+    const table = `<h2>Flaky Leaderboard</h2>
+    <table>${rows}</table>`
+
+    return table;
 }
 
 export function renderPage(content: string): string {
