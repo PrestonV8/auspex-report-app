@@ -39,19 +39,20 @@ export function renderPage(content: string): string {
     <title>Auspex Dashboard</title>
     <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: "Segoe UI", system-ui, sans-serif; background: #f5f5f5; color: #1a1a1a; }
+body { font-family: "Segoe UI", system-ui, sans-serif; background: #0d0d0f; color: #e4e4e7; }
 .app-header { background: #CC0000; color: #fff; padding: 20px 32px; }
 .app-header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
 .page { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
-p { font-size: 1.1rem; margin-bottom: 16px; font-weight: 600; color: #333; }
-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-th, td { padding: 10px 16px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+p { font-size: 1.1rem; margin-bottom: 16px; font-weight: 600; color: #e4e4e7; }
+table { width: 100%; border-collapse: collapse; background: transparent; }
+th, td { padding: 10px 16px; text-align: left; border-bottom: 1px solid #2e2e35; color: #d4d4d8; }
+th { color: #9ca3af; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; }
 tr:last-child td { border-bottom: none; }
-tr:hover { background: #fafafa; }
-.panel { background: #fff; border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+tr:hover { background: #232329; }
+.panel { background: #1a1a1f; border: 1px solid #2a2a31; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; }
 .panel table { box-shadow: none; }
-.panel h2 { font-size: 1.15rem; margin-bottom: 12px; color: #CC0000; }
-.panel p { margin-bottom: 12px; }
+.panel h2 { font-size: 1.15rem; margin-bottom: 12px; color: #f4f4f5; font-weight: 700; }
+.panel p { margin-bottom: 12px; color: #e4e4e7; }
     </style>
     </head>
     <body>
