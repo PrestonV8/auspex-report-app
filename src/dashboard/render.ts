@@ -1,3 +1,5 @@
+import { RunMetadata } from "../shared/types.js";
+
 export function renderPassRateTable(passRates: Record<string, number>, averagePassRate: number): string {
     const runCount = Object.keys(passRates).length;
     const headline = `<p>Average pass rate across ${runCount} runs: ${Math.round(averagePassRate)}%</p>`;
@@ -61,17 +63,17 @@ new Chart(document.getElementById("flakyChart"), {
 }
 
 // function to render the entire page layout
-export function renderPage(content: string): string {
+export function renderPage(overviewContent: string, runsContent: string): string {
     const tabScript = `<script>
-    const tabButtons = document.querySelectorAll(".tab-btn");
+      const tabButtons = document.querySelectorAll(".tab-btn");
 
-    function showTab(tabName) {
+      function showTab(tabName) {
         document.querySelectorAll(".tab-content").forEach((tab) => {
-        tab.style.display = "none";
+          tab.style.display = "none";
         });
 
         tabButtons.forEach((btn) => {
-        btn.classList.remove("active");
+          btn.classList.remove("active");
         });
 
         const targetId = tabName + "-tab";
@@ -79,23 +81,23 @@ export function renderPage(content: string): string {
 
         const matchingButton = document.querySelector('[data-tab="' + tabName + '"]');
         if (matchingButton) {
-        matchingButton.classList.add("active");
+          matchingButton.classList.add("active");
         }
-    }
+      }
 
-    tabButtons.forEach((button) => {
+      tabButtons.forEach((button) => {
         button.addEventListener("click", () => {
-        location.hash = "#/" + button.dataset.tab;
+          location.hash = "#/" + button.dataset.tab;
         });
-    });
+      });
 
-    window.addEventListener("hashchange", () => {
+      window.addEventListener("hashchange", () => {
         const tabName = location.hash.replace("#/", "") || "overview";
         showTab(tabName);
-    });
+      });
 
-    const initialTab = location.hash.replace("#/", "") || "overview";
-    showTab(initialTab);
+      const initialTab = location.hash.replace("#/", "") || "overview";
+      showTab(initialTab);
     </script>`;
 
     return `<!DOCTYPE html>
@@ -136,12 +138,31 @@ tr:hover { background: #232329; }
     <button class="tab-btn" data-tab="test-detail">Test detail</button>
     </nav>
     <main class="page">
-    <div class="tab-content" id="overview-tab">${content}</div>
-    <div class="tab-content" id="runs-tab" style="display:none">Runs — coming soon</div>
+    <div class="tab-content" id="overview-tab">${overviewContent}</div>
+    <div class="tab-content" id="runs-tab" style="display:none">${runsContent}</div>
     <div class="tab-content" id="run-detail-tab" style="display:none">Run detail — coming soon</div>
     <div class="tab-content" id="test-detail-tab" style="display:none">Test detail — coming soon</div>
     </main>
     ${tabScript}
     </body>
     </html>`;
+}
+
+
+export function renderRunsTable(runs: RunMetadata[]): string {
+    const rows = runs.map((run) => {
+    return `<tr>
+            <td>${run.runId}</td>
+            <td>${run.date}</td>
+            <td>${run.runStatus}</td>
+            <td>${run.totals.passed}</td>
+            <td>${run.totals.failed}</td>
+            <td>${run.totals.flaky}</td>
+            </tr>`;
+    }).join("");
+
+    const heading = `<h2>Execution History</h2>`;
+    const table = `<table>${rows}</table>`;
+
+    return `<section class='panel'>${heading}${table}</section>`;
 }

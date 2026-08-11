@@ -3,7 +3,7 @@ import { loadTrendEntries, loadRuns } from "./loadData.js";
 import { groupEntries, calculatePassRates, calculateAveragePassRate, calculateFlakyLeaderboard } from "./analytics.js";
 import fs from "node:fs";
 import { exec } from "node:child_process";
-import { renderPassRateTable, renderPage, renderFlakyLeaderboard } from "./render.js";
+import { renderPassRateTable, renderPage, renderFlakyLeaderboard, renderRunsTable } from "./render.js";
 
 
 // used to filter the entries by amount of days since current dat. Default is over the past 30 days
@@ -25,9 +25,13 @@ const groupedTests = groupEntries(entries, "testId");
 const flakyness = calculateFlakyLeaderboard(groupedTests);
 const flakyLeaderboard = renderFlakyLeaderboard(flakyness);
 
+// Runs table pipeline
+const runs = loadRuns(daysArg);
+const runsTable = renderRunsTable(runs);
+
 // Generating the full dashboard
 const dashboardContent = passRateTable + flakyLeaderboard;
-const dashboard = renderPage(dashboardContent);
+const dashboard = renderPage(dashboardContent, runsTable);
 
 fs.writeFileSync(`./src/dashboard/insights.html`, dashboard);
 
