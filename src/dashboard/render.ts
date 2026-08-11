@@ -1,4 +1,4 @@
-import { RunMetadata } from "../shared/types.js";
+import { RunMetadata, TrendEntry } from "../shared/types.js";
 
 export function renderPassRateTable(passRates: Record<string, number>, averagePassRate: number): string {
     const runCount = Object.keys(passRates).length;
@@ -56,10 +56,14 @@ new Chart(document.getElementById("flakyChart"), {
 });
 </script>`;
 
-    return `<section class="panel">${heading}${chartScript}</section>`;
+    const testLinks = results.map((entry) => {
+        return `<p><a href="#/tests/${entry.testId}" style="color:#60a5fa">${entry.testId}</a></p>`;
+    }).join("");
+
+    return `<section class="panel">${heading}${chartScript}${testLinks}</section>`;
 }
 
-export function renderPage(overviewContent: string, runsContent: string, runDetailContent: string): string {
+export function renderPage(overviewContent: string, runsContent: string, runDetailContent: string, testDetailContent: string): string {
     const tabScript = `<script>
       const tabButtons = document.querySelectorAll(".tab-btn");
 
@@ -89,6 +93,9 @@ export function renderPage(overviewContent: string, runsContent: string, runDeta
         if (hash.startsWith("runs/")) {
           const runId = hash.replace("runs/", "");
           showTab("run-detail-" + runId, true);
+        } else if (hash.startsWith("tests/")) {
+          const testId = hash.replace("tests/", "");
+          showTab("test-detail-" + testId, true);
         } else {
           showTab(hash || "overview");
         }
@@ -144,7 +151,7 @@ tr:hover { background: #232329; }
     <div class="tab-content" id="overview-tab">${overviewContent}</div>
     <div class="tab-content" id="runs-tab" style="display:none">${runsContent}</div>
     ${runDetailContent}
-    <div class="tab-content" id="test-detail-tab" style="display:none">Test detail — coming soon</div>
+    ${testDetailContent}
     </main>
     ${tabScript}
     </body>
@@ -180,6 +187,29 @@ export function renderRunDetail(runs: RunMetadata[]): string {
                     <p>Environment: ${run.environment.Environment ?? "N/A"} (${run.environment.Branch ?? "N/A"})</p>
                     <p>Executor: ${run.executor.name} (${run.executor.type})</p>
                     <p>Totals: ${run.totals.passed} passed, ${run.totals.failed} failed, ${run.totals.flaky} flaky, ${run.totals.skipped} skipped, ${run.totals.timedOut} timedOut</p>
+                </section>
+                </div>`;
+    }).join("");
+
+    return blocks;
+}
+
+
+export function renderTestDetail(entries: TrendEntry[]): string {
+    const latestByTestId = new Map<string, TrendEntry>();
+    for (const entry of entries) {
+      latestByTestId.set(entry.testId, entry);
+    }
+
+    const blocks = Array.from(latestByTestId.values()).map((entry) => {
+      return `<div class="tab-content" id="test-detail-${entry.testId}" style="display:none">
+                <section class="panel">
+                    <h2>Test Detail — ${entry.title}</h2>
+                    <p>Status: ${entry.status}</p>
+                    <p>Duration: ${Math.round(entry.duration / 1000)}s</p>
+                    <p>Flaky: ${entry.flaky}</p>
+                    <p>Project: ${entry.project}</p>
+                    <p>Error: ${entry.errorMessage || "None"}</p>
                 </section>
                 </div>`;
     }).join("");
