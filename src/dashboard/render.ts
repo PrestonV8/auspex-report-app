@@ -65,21 +65,37 @@ export function renderPage(content: string): string {
     const tabScript = `<script>
     const tabButtons = document.querySelectorAll(".tab-btn");
 
-    tabButtons.forEach((button) => {
-        button.addEventListener("click", () => {
+    function showTab(tabName) {
         document.querySelectorAll(".tab-content").forEach((tab) => {
-            tab.style.display = "none";
+        tab.style.display = "none";
         });
 
         tabButtons.forEach((btn) => {
-            btn.classList.remove("active");
+        btn.classList.remove("active");
         });
 
-        const targetId = button.dataset.tab + "-tab";
+        const targetId = tabName + "-tab";
         document.getElementById(targetId).style.display = "block";
-        button.classList.add("active");
+
+        const matchingButton = document.querySelector('[data-tab="' + tabName + '"]');
+        if (matchingButton) {
+        matchingButton.classList.add("active");
+        }
+    }
+
+    tabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+        location.hash = "#/" + button.dataset.tab;
         });
     });
+
+    window.addEventListener("hashchange", () => {
+        const tabName = location.hash.replace("#/", "") || "overview";
+        showTab(tabName);
+    });
+
+    const initialTab = location.hash.replace("#/", "") || "overview";
+    showTab(initialTab);
     </script>`;
 
     return `<!DOCTYPE html>
