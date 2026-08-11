@@ -60,8 +60,28 @@ new Chart(document.getElementById("flakyChart"), {
     return `<section class="panel">${heading}${chartScript}</section>`;
 }
 
-
+// function to render the entire page layout
 export function renderPage(content: string): string {
+    const tabScript = `<script>
+    const tabButtons = document.querySelectorAll(".tab-btn");
+
+    tabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+        document.querySelectorAll(".tab-content").forEach((tab) => {
+            tab.style.display = "none";
+        });
+
+        tabButtons.forEach((btn) => {
+            btn.classList.remove("active");
+        });
+
+        const targetId = button.dataset.tab + "-tab";
+        document.getElementById(targetId).style.display = "block";
+        button.classList.add("active");
+        });
+    });
+    </script>`;
+
     return `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -73,6 +93,9 @@ export function renderPage(content: string): string {
 body { font-family: "Segoe UI", system-ui, sans-serif; background: #0d0d0f; color: #e4e4e7; }
 .app-header { background: #CC0000; color: #fff; padding: 20px 32px; }
 .app-header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
+.tabs { display: flex; gap: 4px; background: #16161a; padding: 0 32px; border-bottom: 1px solid #2a2a31; }
+.tab-btn { background: none; border: none; color: #9ca3af; padding: 14px 18px; font-size: 0.95rem; cursor: pointer; border-bottom: 2px solid transparent; }
+.tab-btn.active { color: #fff; border-bottom-color: #CC0000; }
 .page { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
 p { font-size: 1.1rem; margin-bottom: 16px; font-weight: 600; color: #e4e4e7; }
 table { width: 100%; border-collapse: collapse; background: transparent; }
@@ -90,9 +113,19 @@ tr:hover { background: #232329; }
     <header class="app-header">
     <h1>Auspex</h1>
     </header>
+    <nav class="tabs">
+    <button class="tab-btn active" data-tab="overview">Overview</button>
+    <button class="tab-btn" data-tab="runs">Runs</button>
+    <button class="tab-btn" data-tab="run-detail">Run detail</button>
+    <button class="tab-btn" data-tab="test-detail">Test detail</button>
+    </nav>
     <main class="page">
-    ${content}
+    <div class="tab-content" id="overview-tab">${content}</div>
+    <div class="tab-content" id="runs-tab" style="display:none">Runs — coming soon</div>
+    <div class="tab-content" id="run-detail-tab" style="display:none">Run detail — coming soon</div>
+    <div class="tab-content" id="test-detail-tab" style="display:none">Test detail — coming soon</div>
     </main>
+    ${tabScript}
     </body>
     </html>`;
 }
