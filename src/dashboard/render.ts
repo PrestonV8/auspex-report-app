@@ -1,16 +1,6 @@
-
-
 export function renderPassRateTable(passRates: Record<string, number>, averagePassRate: number): string {
-    const rows = Object.entries(passRates).map(([runId, rate]) => {
-        return `<tr>
-                <td>${runId}</td>
-                <td>${Math.round(rate)}%</td>
-                </tr>`;
-    }).join("");
-
     const runCount = Object.keys(passRates).length;
     const headline = `<p>Average pass rate across ${runCount} runs: ${Math.round(averagePassRate)}%</p>`;
-    const table = `<table>${rows}</table>`;
 
     // for chart.js
     const chartData = {
@@ -33,21 +23,12 @@ new Chart(document.getElementById("passRateChart"), {
 });
 </script>`;
 
-    return `<section class="panel">${headline}${table}${chartScript}</section>`;
+    return `<section class="panel">${headline}${chartScript}</section>`;
 }
 
 // function to generate the flakyness leaderboard
 export function renderFlakyLeaderboard(results: { testId: string, flakyCount: number, failCount: number }[]): string {
-    const rows = results.map((entry) => {
-        return `<tr>
-        <td>${entry.testId}</td>
-        <td>${entry.flakyCount}</td>
-        <td>${entry.failCount}</td>
-                </tr>`;
-    }).join("");
-
-    const table = `<h2>Flaky Leaderboard</h2>
-    <table>${rows}</table>`
+    const heading = `<h2>Flaky Leaderboard</h2>`;
 
     // for chart.js
     const labels = results.map((entry) => entry.testId);
@@ -76,7 +57,7 @@ new Chart(document.getElementById("flakyChart"), {
 });
 </script>`;
 
-    return `<section class="panel">${table}${chartScript}</section>`
+    return `<section class="panel">${heading}${chartScript}</section>`;
 }
 
 
