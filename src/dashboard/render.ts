@@ -12,7 +12,28 @@ export function renderPassRateTable(passRates: Record<string, number>, averagePa
     const headline = `<p>Average pass rate across ${runCount} runs: ${Math.round(averagePassRate)}%</p>`;
     const table = `<table>${rows}</table>`;
 
-    return `<section class="panel">${headline}${table}</section>`;
+    // for chart.js
+    const chartData = {
+        labels: Object.keys(passRates),
+        data: Object.values(passRates)
+    };
+    const chartDataJson = JSON.stringify(chartData);
+    const chartScript = `<canvas id="passRateChart"></canvas>
+<script>
+const passRateData = ${chartDataJson};
+new Chart(document.getElementById("passRateChart"), {
+  type: "line",
+  data: {
+    labels: passRateData.labels,
+    datasets: [{
+      label: "Pass Rate %",
+      data: passRateData.data
+    }]
+  }
+});
+</script>`;
+
+    return `<section class="panel">${headline}${table}${chartScript}</section>`;
 }
 
 // function to generate the flakyness leaderboard
@@ -37,6 +58,7 @@ export function renderPage(content: string): string {
     <head>
     <meta charset="UTF-8" />
     <title>Auspex Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: "Segoe UI", system-ui, sans-serif; background: #0d0d0f; color: #e4e4e7; }
