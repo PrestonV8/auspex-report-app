@@ -4,7 +4,6 @@ export function renderPassRateTable(passRates: Record<string, number>, averagePa
     const runCount = Object.keys(passRates).length;
     const headline = `<p>Average pass rate across ${runCount} runs: ${Math.round(averagePassRate)}%</p>`;
 
-    // for chart.js
     const chartData = {
         labels: Object.keys(passRates),
         data: Object.values(passRates)
@@ -28,11 +27,9 @@ new Chart(document.getElementById("passRateChart"), {
     return `<section class="panel">${headline}${chartScript}</section>`;
 }
 
-// function to generate the flakyness leaderboard
 export function renderFlakyLeaderboard(results: { testId: string, flakyCount: number, failCount: number }[]): string {
     const heading = `<h2>Flaky Leaderboard</h2>`;
 
-    // for chart.js
     const labels = results.map((entry) => entry.testId);
     const flakyCounts = results.map((entry) => entry.flakyCount);
     const failCounts = results.map((entry) => entry.failCount);
@@ -62,12 +59,11 @@ new Chart(document.getElementById("flakyChart"), {
     return `<section class="panel">${heading}${chartScript}</section>`;
 }
 
-// function to render the entire page layout
-export function renderPage(overviewContent: string, runsContent: string): string {
+export function renderPage(overviewContent: string, runsContent: string, runDetailContent: string): string {
     const tabScript = `<script>
       const tabButtons = document.querySelectorAll(".tab-btn");
 
-      function showTab(tabName) {
+      function showTab(targetId, isDynamic) {
         document.querySelectorAll(".tab-content").forEach((tab) => {
           tab.style.display = "none";
         });
@@ -76,12 +72,25 @@ export function renderPage(overviewContent: string, runsContent: string): string
           btn.classList.remove("active");
         });
 
-        const targetId = tabName + "-tab";
-        document.getElementById(targetId).style.display = "block";
+        const elementId = isDynamic ? targetId : targetId + "-tab";
+        document.getElementById(elementId).style.display = "block";
 
-        const matchingButton = document.querySelector('[data-tab="' + tabName + '"]');
-        if (matchingButton) {
-          matchingButton.classList.add("active");
+        if (!isDynamic) {
+          const matchingButton = document.querySelector('[data-tab="' + targetId + '"]');
+          if (matchingButton) {
+            matchingButton.classList.add("active");
+          }
+        }
+      }
+
+      function handleRoute() {
+        const hash = location.hash.replace("#/", "");
+
+        if (hash.startsWith("runs/")) {
+          const runId = hash.replace("runs/", "");
+          showTab("run-detail-" + runId, true);
+        } else {
+          showTab(hash || "overview");
         }
       }
 
@@ -91,13 +100,8 @@ export function renderPage(overviewContent: string, runsContent: string): string
         });
       });
 
-      window.addEventListener("hashchange", () => {
-        const tabName = location.hash.replace("#/", "") || "overview";
-        showTab(tabName);
-      });
-
-      const initialTab = location.hash.replace("#/", "") || "overview";
-      showTab(initialTab);
+      window.addEventListener("hashchange", handleRoute);
+      handleRoute();
     </script>`;
 
     return `<!DOCTYPE html>
@@ -134,13 +138,12 @@ tr:hover { background: #232329; }
     <nav class="tabs">
     <button class="tab-btn active" data-tab="overview">Overview</button>
     <button class="tab-btn" data-tab="runs">Runs</button>
-    <button class="tab-btn" data-tab="run-detail">Run detail</button>
     <button class="tab-btn" data-tab="test-detail">Test detail</button>
     </nav>
     <main class="page">
     <div class="tab-content" id="overview-tab">${overviewContent}</div>
     <div class="tab-content" id="runs-tab" style="display:none">${runsContent}</div>
-    <div class="tab-content" id="run-detail-tab" style="display:none">Run detail — coming soon</div>
+    ${runDetailContent}
     <div class="tab-content" id="test-detail-tab" style="display:none">Test detail — coming soon</div>
     </main>
     ${tabScript}
@@ -148,10 +151,9 @@ tr:hover { background: #232329; }
     </html>`;
 }
 
-
 export function renderRunsTable(runs: RunMetadata[]): string {
     const rows = runs.map((run) => {
-    return `<tr>
+    return `<tr onclick="location.hash = '#/runs/${run.runId}'" style="cursor:pointer">
             <td>${run.runId}</td>
             <td>${run.date}</td>
             <td>${run.runStatus}</td>
@@ -165,4 +167,22 @@ export function renderRunsTable(runs: RunMetadata[]): string {
     const table = `<table>${rows}</table>`;
 
     return `<section class='panel'>${heading}${table}</section>`;
+}
+
+export function renderRunDetail(runs: RunMetadata[]): string {
+    const blocks = runs.map((run) => {
+         return `<div class="tab-content run-detail-block" id="run-detail-${run.runId}" style="display:none">
+                <section class="panel">
+                    <h2>Run Detail — ${run.runId}</h2>
+                    <p>Date: ${run.date}</p>
+                    <p>Status: ${run.runStatus}</p>
+                    <p>Duration: ${Math.round(run.durationMs / 1000)}s</p>
+                    <p>Environment: ${run.environment.Environment ?? "N/A"} (${run.environment.Branch ?? "N/A"})</p>
+                    <p>Executor: ${run.executor.name} (${run.executor.type})</p>
+                    <p>Totals: ${run.totals.passed} passed, ${run.totals.failed} failed, ${run.totals.flaky} flaky, ${run.totals.skipped} skipped, ${run.totals.timedOut} timedOut</p>
+                </section>
+                </div>`;
+    }).join("");
+
+    return blocks;
 }
