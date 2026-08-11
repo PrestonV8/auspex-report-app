@@ -49,8 +49,36 @@ export function renderFlakyLeaderboard(results: { testId: string, flakyCount: nu
     const table = `<h2>Flaky Leaderboard</h2>
     <table>${rows}</table>`
 
-    return `<section class="panel">${table}</section>`
+    // for chart.js
+    const labels = results.map((entry) => entry.testId);
+    const flakyCounts = results.map((entry) => entry.flakyCount);
+    const failCounts = results.map((entry) => entry.failCount);
+
+    const chartData = {
+        labels: labels,
+        flakyCounts: flakyCounts,
+        failCounts: failCounts
+    };
+    const chartDataJson = JSON.stringify(chartData);
+
+    const chartScript = `<canvas id="flakyChart"></canvas>
+<script>
+const flakyChartData = ${chartDataJson};
+new Chart(document.getElementById("flakyChart"), {
+  type: "bar",
+  data: {
+    labels: flakyChartData.labels,
+    datasets: [
+      { label: "Flaky Count", data: flakyChartData.flakyCounts },
+      { label: "Fail Count", data: flakyChartData.failCounts }
+    ]
+  }
+});
+</script>`;
+
+    return `<section class="panel">${table}${chartScript}</section>`
 }
+
 
 export function renderPage(content: string): string {
     return `<!DOCTYPE html>
