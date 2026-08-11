@@ -145,7 +145,6 @@ tr:hover { background: #232329; }
     <nav class="tabs">
     <button class="tab-btn active" data-tab="overview">Overview</button>
     <button class="tab-btn" data-tab="runs">Runs</button>
-    <button class="tab-btn" data-tab="test-detail">Test detail</button>
     </nav>
     <main class="page">
     <div class="tab-content" id="overview-tab">${overviewContent}</div>
@@ -202,6 +201,10 @@ export function renderTestDetail(entries: TrendEntry[]): string {
     }
 
     const blocks = Array.from(latestByTestId.values()).map((entry) => {
+      const stepsHtml = entry.steps.map((step) => {
+        return `<p>${step.title} — ${step.durationMs}ms</p>`;
+      }).join("");
+
       return `<div class="tab-content" id="test-detail-${entry.testId}" style="display:none">
                 <section class="panel">
                     <h2>Test Detail — ${entry.title}</h2>
@@ -210,6 +213,15 @@ export function renderTestDetail(entries: TrendEntry[]): string {
                     <p>Flaky: ${entry.flaky}</p>
                     <p>Project: ${entry.project}</p>
                     <p>Error: ${entry.errorMessage || "None"}</p>
+                </section>
+                <section class="panel">
+                    <h2>Steps</h2>
+                    ${stepsHtml || "<p>No steps recorded</p>"}
+                </section>
+                <section class="panel">
+                    <h2>Terminal Output</h2>
+                    <pre>${entry.stdout || "No stdout captured"}</pre>
+                    <pre>${entry.stderr || "No stderr captured"}</pre>
                 </section>
                 </div>`;
     }).join("");
