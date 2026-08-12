@@ -299,3 +299,20 @@ export function renderSlowSteps(steps: {title: string, avgDurationMs: number }[]
 
   return `<section class="panel">${heading}${table}</section>`;
 }
+
+// function to render the tag breakdown calculations
+export function renderTagBreakdown(tags: { tag: string, passed: number, failed: number }[]): string {
+    const heading = `<h2>Tag Breakdown</h2>`;
+
+    const rows = tags.map((entry) => {
+        return `<tr>
+                <td>${entry.tag}</td>
+                <td>${entry.passed}</td>
+                <td>${entry.failed}</td>
+                </tr>`;
+    }).join("");
+
+    const table = `<table>${rows}</table>`;
+
+    return `<section class="panel">${heading}${table}</section>`;
+}

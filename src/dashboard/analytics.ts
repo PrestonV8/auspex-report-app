@@ -173,3 +173,29 @@ export function calculateSlowSteps(entries: TrendEntry[]): { title: string, avgD
 
     return top20;
 }
+
+// function to calculate the tag breakdown
+export function calculateTagBreakdown(entries: TrendEntry[]): { tag: string, passed: number, failed: number }[] {
+    const tagCounts: Record<string, { passed: number, failed: number }> = {};
+
+    for (const entry of entries) {
+        for (const tag of entry.tags) {
+            if (!tagCounts[tag]) {
+                tagCounts[tag] = { passed: 0, failed: 0 };
+            }
+
+            if (entry.status === "passed") {
+                tagCounts[tag].passed++;
+            } else {
+                tagCounts[tag].failed++;
+            }
+        }
+    }
+
+    const results = [];
+    for (const tag in tagCounts) {
+        results.push({ tag, passed: tagCounts[tag].passed, failed: tagCounts[tag].failed });
+    }
+
+    return results;
+}

@@ -1,9 +1,9 @@
 import minimist from "minimist";
 import { loadTrendEntries, loadRuns } from "./loadData.js";
-import { groupEntries, calculatePassRates, calculateAveragePassRate, calculateFlakyLeaderboard, calculateDurationDrift, calculateAverageDurationPerRun, calculateSlowSteps } from "./analytics.js";
+import { groupEntries, calculatePassRates, calculateAveragePassRate, calculateFlakyLeaderboard, calculateDurationDrift, calculateAverageDurationPerRun, calculateSlowSteps, calculateTagBreakdown } from "./analytics.js";
 import fs from "node:fs";
 import { exec } from "node:child_process";
-import { renderPassRateTable, renderPage, renderFlakyLeaderboard, renderRunsTable, renderRunDetail, renderTestDetail, renderDurationDriftTable, renderAvgDurationChart, renderSlowSteps } from "./render.js";
+import { renderPassRateTable, renderPage, renderFlakyLeaderboard, renderRunsTable, renderRunDetail, renderTestDetail, renderDurationDriftTable, renderAvgDurationChart, renderSlowSteps, renderTagBreakdown } from "./render.js";
 import { TrendEntry } from "../shared/types.js";
 
 
@@ -43,8 +43,11 @@ const avgDurationChart = renderAvgDurationChart(avgDurations);
 const slowSteps = calculateSlowSteps(entries);
 const slowStepsTable = renderSlowSteps(slowSteps);
 
+const tagBreakdown = calculateTagBreakdown(entries);
+const tagBreakdownTable = renderTagBreakdown(tagBreakdown);
+
 // Generating the full dashboard
-const dashboardContent = passRateTable + flakyLeaderboard + durationDriftTable + avgDurationChart + slowStepsTable;
+const dashboardContent = passRateTable + flakyLeaderboard + durationDriftTable + avgDurationChart + slowStepsTable + tagBreakdownTable;
 const dashboard = renderPage(dashboardContent, runsTable, runDetailBlocks, testDetailBlocks);
 
 fs.writeFileSync(`./src/dashboard/insights.html`, dashboard);
