@@ -1,9 +1,10 @@
 import minimist from "minimist";
 import { loadTrendEntries, loadRuns } from "./loadData.js";
-import { groupEntries, calculatePassRates, calculateAveragePassRate, calculateFlakyLeaderboard, calculateDurationDrift } from "./analytics.js";
+import { groupEntries, calculatePassRates, calculateAveragePassRate, calculateFlakyLeaderboard, calculateDurationDrift, calculateAverageDurationPerRun } from "./analytics.js";
 import fs from "node:fs";
 import { exec } from "node:child_process";
-import { renderPassRateTable, renderPage, renderFlakyLeaderboard, renderRunsTable, renderRunDetail, renderTestDetail, renderDurationDriftTable } from "./render.js";
+import { renderPassRateTable, renderPage, renderFlakyLeaderboard, renderRunsTable, renderRunDetail, renderTestDetail, renderDurationDriftTable, renderAvgDurationChart } from "./render.js";
+import { TrendEntry } from "../shared/types.js";
 
 
 // used to filter the entries by amount of days since current dat. Default is over the past 30 days
@@ -36,8 +37,11 @@ const testDetailBlocks = renderTestDetail(entries);
 const durationDrift = calculateDurationDrift(groupedTests);
 const durationDriftTable = renderDurationDriftTable(durationDrift);
 
+const avgDurations = calculateAverageDurationPerRun(groupedRuns);
+const avgDurationChart = renderAvgDurationChart(avgDurations);
+
 // Generating the full dashboard
-const dashboardContent = passRateTable + flakyLeaderboard + durationDriftTable;
+const dashboardContent = passRateTable + flakyLeaderboard + durationDriftTable + avgDurationChart;
 const dashboard = renderPage(dashboardContent, runsTable, runDetailBlocks, testDetailBlocks);
 
 fs.writeFileSync(`./src/dashboard/insights.html`, dashboard);
@@ -62,5 +66,9 @@ if (shouldOpen === true) {
     }
 
     exec(`${command} ./src/dashboard/insights.html`);
+}
+
+function calculateAverageDurations(groupedTests: Record<string, TrendEntry[]>) {
+    throw new Error("Function not implemented.");
 }
 

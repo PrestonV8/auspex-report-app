@@ -115,3 +115,21 @@ export function calculateDurationDrift(entries: Record<string, TrendEntry[]>): {
 
     return results;
 }
+
+// function to calculate the average duration of all tests
+export function calculateAverageDurationPerRun(grouped: Record<string, TrendEntry[]>): Record<string, number> {
+    const averages: Record<string, number> = {};
+
+    for (const runId in grouped) {
+        const entries = grouped[runId];
+
+        let sum = 0;
+        for (const entry of entries) {
+            sum += entry.duration;
+        }
+
+        averages[runId] = sum / entries.length;
+    }
+
+    return averages;
+}

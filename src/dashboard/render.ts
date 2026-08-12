@@ -253,3 +253,33 @@ export function renderTestDetail(entries: TrendEntry[]): string {
 
     return blocks;
 }
+
+
+// function to render the average duration per run
+export function renderAvgDurationChart(durations: Record<string, number>): string {
+  const heading = `<h2>Average Duration per Run</h2>`;
+
+  const chartData = {
+    labels: Object.keys(durations),
+    data: Object.values(durations).map((ms) => Math.round(ms / 1000))
+  };
+
+  const chartDataJson = JSON.stringify(chartData);
+
+  const chartScript = `<canvas id="avgDurationChart"></canvas>
+  <script>
+  const avgDurationData = ${chartDataJson};
+  new Chart(document.getElementById("avgDurationChart"), {
+    type: "line",
+    data: {
+      labels: avgDurationData.labels,
+      datasets: [{
+        label: "Avg Duration (s)",
+        data: avgDurationData.data
+      }]
+    }
+  });
+  </script>`;
+
+  return `<section class="panel">${heading}${chartScript}</section>`;
+}
