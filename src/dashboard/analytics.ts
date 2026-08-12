@@ -1,5 +1,5 @@
 // For all the computation and calculations the dashboard needs
-import { TrendEntry } from "../shared/types.js";
+import { TrendEntry, TrendStep } from "../shared/types.js";
 import { loadTrendEntries } from "./loadData.js";
 
 
