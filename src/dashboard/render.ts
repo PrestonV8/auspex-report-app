@@ -182,21 +182,47 @@ tr:hover { background: #232329; }
 
 // function to render the runs table from the calculatePassRates function
 export function renderRunsTable(runs: RunMetadata[]): string {
-    const rows = runs.map((run) => {
-    return `<tr onclick="location.hash = '#/runs/${run.runId}'" style="cursor:pointer">
-            <td>${run.runId}</td>
-            <td>${run.date}</td>
-            <td>${run.runStatus}</td>
-            <td>${run.totals.passed}</td>
-            <td>${run.totals.failed}</td>
-            <td>${run.totals.flaky}</td>
-            </tr>`;
-    }).join("");
-
     const heading = `<h2>Execution History</h2>`;
-    const table = `<table>${rows}</table>`;
 
-    return `<section class='panel'>${heading}${table}</section>`;
+    const runsJson = JSON.stringify(runs);
+
+    const filterScript = `<select id="statusFilter">
+      <option value="all">All Statuses</option>
+      <option value="passed">Passed</option>
+      <option value="failed">Failed</option>
+      <option value="timedOut">Timed Out</option>
+    </select>
+    <table><tbody id="runsTableBody"></tbody></table>
+    <script>
+      const allRuns = ${runsJson};
+
+      function renderRows(statusFilter) {
+        const filtered = statusFilter === "all"
+          ? allRuns
+          : allRuns.filter((run) => run.runStatus === statusFilter);
+
+        const rowsHtml = filtered.map((run) => {
+          return "<tr onclick=\\"location.hash = '#/runs/" + run.runId + "'\\" style=\\"cursor:pointer\\">" +
+                 "<td>" + run.runId + "</td>" +
+                 "<td>" + run.date + "</td>" +
+                 "<td>" + run.runStatus + "</td>" +
+                 "<td>" + run.totals.passed + "</td>" +
+                 "<td>" + run.totals.failed + "</td>" +
+                 "<td>" + run.totals.flaky + "</td>" +
+                 "</tr>";
+        }).join("");
+
+        document.getElementById("runsTableBody").innerHTML = rowsHtml;
+      }
+
+      document.getElementById("statusFilter").addEventListener("change", (e) => {
+        renderRows(e.target.value);
+      });
+
+      renderRows("all");
+    </script>`;
+
+    return `<section class="panel">${heading}${filterScript}</section>`;
 }
 
 // function to set up the run details block of the dashboard
