@@ -283,3 +283,19 @@ export function renderAvgDurationChart(durations: Record<string, number>): strin
 
   return `<section class="panel">${heading}${chartScript}</section>`;
 }
+
+// funcion to render the slowed steps calculations
+export function renderSlowSteps(steps: {title: string, avgDurationMs: number }[]): string {
+  const heading = `<h2>Slowest Steps</h2>`;
+
+  const rows = steps.map((step) => {
+    return `<tr>
+    <td>${step.title}</td>
+    <td>${Math.round(step.avgDurationMs)}ms</td>
+    </tr>`;
+  }).join("");
+
+  const table = `<table>${rows}</table>`;
+
+  return `<section class="panel">${heading}${table}</section>`;
+}

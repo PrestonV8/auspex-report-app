@@ -133,3 +133,43 @@ export function calculateAverageDurationPerRun(grouped: Record<string, TrendEntr
 
     return averages;
 }
+
+// function to calculate the slow steps
+export function calculateSlowSteps(entries: TrendEntry[]): { title: string, avgDurationMs: number}[] {
+    // Step 1: flatten every step from every entry into a single array
+    const allSteps: TrendStep[] = [];
+    for (const entry of entries) {
+        for (const step of entry.steps) {
+            allSteps.push(step);
+        }
+    }
+
+    // Step 2: group the flattened steps by their title
+    const grouped: Record<string, TrendStep[]> = {};
+    for (const step of allSteps) {
+        if (!grouped[step.title]) {
+            grouped[step.title] = [];
+        }
+        grouped[step.title].push(step);
+    }
+
+    // Step 3: average durationMs per title
+    const results = [];
+    for (const title in grouped) {
+        const steps = grouped[title];
+
+        let sum = 0;
+        for (const step of steps) {
+            sum += step.durationMs;
+        }
+        const avgDurationMs = sum / steps.length;
+
+        results.push({title, avgDurationMs});
+    }
+
+    // Step 4: sort descending, take top 20
+    results.sort((a,b) => b.avgDurationMs - a.avgDurationMs);
+    const top20 = results.slice(0, 20);
+
+    return top20;
+}
