@@ -192,14 +192,28 @@ export function renderRunsTable(runs: RunMetadata[]): string {
       <option value="failed">Failed</option>
       <option value="timedOut">Timed Out</option>
     </select>
+    <select id="envFilter">
+      <option value="all">All Environments</option>
+      <option value="UAT">UAT</option>
+      <option value="unknown">Unknown</option>
+    </select>
     <table><tbody id="runsTableBody"></tbody></table>
     <script>
       const allRuns = ${runsJson};
 
-      function renderRows(statusFilter) {
-        const filtered = statusFilter === "all"
-          ? allRuns
-          : allRuns.filter((run) => run.runStatus === statusFilter);
+      function renderRows() {
+        const statusValue = document.getElementById("statusFilter").value;
+        const envValue = document.getElementById("envFilter").value;
+
+        let filtered = allRuns;
+
+        if (statusValue !== "all") {
+          filtered = filtered.filter((run) => run.runStatus === statusValue);
+        }
+
+        if (envValue !== "all") {
+          filtered = filtered.filter((run) => (run.environment.Environment || "unknown") === envValue);
+        }
 
         const rowsHtml = filtered.map((run) => {
           return "<tr onclick=\\"location.hash = '#/runs/" + run.runId + "'\\" style=\\"cursor:pointer\\">" +
@@ -215,11 +229,10 @@ export function renderRunsTable(runs: RunMetadata[]): string {
         document.getElementById("runsTableBody").innerHTML = rowsHtml;
       }
 
-      document.getElementById("statusFilter").addEventListener("change", (e) => {
-        renderRows(e.target.value);
-      });
+      document.getElementById("statusFilter").addEventListener("change", renderRows);
+      document.getElementById("envFilter").addEventListener("change", renderRows);
 
-      renderRows("all");
+      renderRows();
     </script>`;
 
     return `<section class="panel">${heading}${filterScript}</section>`;
