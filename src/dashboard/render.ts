@@ -316,3 +316,17 @@ export function renderTagBreakdown(tags: { tag: string, passed: number, failed: 
 
     return `<section class="panel">${heading}${table}</section>`;
 }
+
+// function to render the KPI row
+export function renderKPIRow(averagePassRate: number, runCount: number, avgDurations: Record<string, number>): string {
+  const avgDurationValues = Object.values(avgDurations);
+  const overallAvgDuration = avgDurationValues.reduce((sum, val) => sum + val, 0) / avgDurationValues.length;
+
+    return `<section class="panel">
+            <div style="display:flex; gap:32px; flex-wrap:wrap;">
+                <div><p style="margin-bottom:4px; color:#9ca3af; font-size:0.85rem;">Avg Pass Rate</p><h2>${Math.round(averagePassRate)}%</h2></div>
+                <div><p style="margin-bottom:4px; color:#9ca3af; font-size:0.85rem;">Total Runs</p><h2>${runCount}</h2></div>
+                <div><p style="margin-bottom:4px; color:#9ca3af; font-size:0.85rem;">Avg Duration</p><h2>${Math.round(overallAvgDuration / 1000)}s</h2></div>
+            </div>
+            </section>`;
+}
