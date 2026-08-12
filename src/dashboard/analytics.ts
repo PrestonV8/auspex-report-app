@@ -80,3 +80,37 @@ export function calculateFlakyLeaderboard(grouped: Record<string, TrendEntry[]>)
 
     return top15Results;
 }
+
+
+export function calculateDurationDrift(entries: Record<string, TrendEntry[]>): { testId: string, firstHalfAvg: number, lastHalfAvg: number, percentChange: number }[] {
+    const results = [];
+    for (const testId in entries) {
+        const testEntries = entries[testId];
+        testEntries.sort((a, b) => new Date(a.ts).getTime() - new Date(b.ts).getTime());
+
+        const midpoint = Math.floor(testEntries.length / 2);
+        const firstHalf = testEntries.slice(0, midpoint);
+        const lastHalf = testEntries.slice(midpoint);
+
+        let firstHalfSum = 0;
+        for (const entry of firstHalf) {
+            firstHalfSum += entry.duration;
+        }
+        const firstHalfAvg = firstHalfSum / firstHalf.length;
+
+        let lastHalfSum = 0;
+        for (const entry of lastHalf) {
+            lastHalfSum += entry.duration;
+        }
+        const lastHalfAvg = lastHalfSum / lastHalf.length;
+
+        const percentChange = ((lastHalfAvg - firstHalfAvg) / firstHalfAvg) * 100;
+
+        // check with 10% threshold, if the percent change is greater than or equal to 10% then add it to the results array
+        if (Math.abs(percentChange) >= 10) {
+            results.push({ testId, firstHalfAvg, lastHalfAvg, percentChange });
+        }
+    }
+
+    return results;
+}

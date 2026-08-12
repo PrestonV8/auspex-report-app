@@ -1,9 +1,9 @@
 import minimist from "minimist";
 import { loadTrendEntries, loadRuns } from "./loadData.js";
-import { groupEntries, calculatePassRates, calculateAveragePassRate, calculateFlakyLeaderboard } from "./analytics.js";
+import { groupEntries, calculatePassRates, calculateAveragePassRate, calculateFlakyLeaderboard, calculateDurationDrift } from "./analytics.js";
 import fs from "node:fs";
 import { exec } from "node:child_process";
-import { renderPassRateTable, renderPage, renderFlakyLeaderboard, renderRunsTable, renderRunDetail, renderTestDetail } from "./render.js";
+import { renderPassRateTable, renderPage, renderFlakyLeaderboard, renderRunsTable, renderRunDetail, renderTestDetail, renderDurationDriftTable } from "./render.js";
 
 
 // used to filter the entries by amount of days since current dat. Default is over the past 30 days
@@ -33,8 +33,11 @@ const runDetailBlocks = renderRunDetail(runs);
 
 const testDetailBlocks = renderTestDetail(entries);
 
+const durationDrift = calculateDurationDrift(groupedTests);
+const durationDriftTable = renderDurationDriftTable(durationDrift);
+
 // Generating the full dashboard
-const dashboardContent = passRateTable + flakyLeaderboard;
+const dashboardContent = passRateTable + flakyLeaderboard + durationDriftTable;
 const dashboard = renderPage(dashboardContent, runsTable, runDetailBlocks, testDetailBlocks);
 
 fs.writeFileSync(`./src/dashboard/insights.html`, dashboard);

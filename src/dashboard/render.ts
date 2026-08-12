@@ -63,6 +63,26 @@ new Chart(document.getElementById("flakyChart"), {
     return `<section class="panel">${heading}${chartScript}${testLinks}</section>`;
 }
 
+
+export function renderDurationDriftTable(drifts: { testId: string, firstHalfAvg: number, lastHalfAvg: number, percentChange: number }[]): string {
+    const heading = `<h2>Duration Drift</h2>`;
+
+    const rows = drifts.map((drift) => {
+      const direction = drift.percentChange > 0 ? "slower" : "faster";
+      const color = drift.percentChange > 0 ? "red" : "green";
+      return `<tr>
+                <td>${drift.testId}</td>
+                <td>${Math.round(drift.firstHalfAvg)}ms</td>
+                <td>${Math.round(drift.lastHalfAvg)}ms</td>
+                <td style="color:${color}">${Math.abs(Math.round(drift.percentChange))}% ${direction}</td>
+                </tr>`;
+    }).join("");
+
+    const table = `<table>${rows || `<tr><td>No significant duration drift detected</td></tr>`}</table>`;
+
+    return `<section class="panel">${heading}${table}</section>`;
+}
+
 export function renderPage(overviewContent: string, runsContent: string, runDetailContent: string, testDetailContent: string): string {
     const tabScript = `<script>
       const tabButtons = document.querySelectorAll(".tab-btn");
