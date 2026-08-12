@@ -1,5 +1,6 @@
 import { RunMetadata, TrendEntry } from "../shared/types.js";
 
+// function to render the pass rate table from the calculatePassRates function
 export function renderPassRateTable(passRates: Record<string, number>, averagePassRate: number): string {
     const runCount = Object.keys(passRates).length;
     const headline = `<p>Average pass rate across ${runCount} runs: ${Math.round(averagePassRate)}%</p>`;
@@ -27,6 +28,7 @@ new Chart(document.getElementById("passRateChart"), {
     return `<section class="panel">${headline}${chartScript}</section>`;
 }
 
+// function to render the flaky leaderboard chart and test links
 export function renderFlakyLeaderboard(results: { testId: string, flakyCount: number, failCount: number }[]): string {
     const heading = `<h2>Flaky Leaderboard</h2>`;
 
@@ -63,7 +65,7 @@ new Chart(document.getElementById("flakyChart"), {
     return `<section class="panel">${heading}${chartScript}${testLinks}</section>`;
 }
 
-
+// function to render the duration drift table from the calculateDurationDrift function
 export function renderDurationDriftTable(drifts: { testId: string, firstHalfAvg: number, lastHalfAvg: number, percentChange: number }[]): string {
     const heading = `<h2>Duration Drift</h2>`;
 
@@ -83,6 +85,7 @@ export function renderDurationDriftTable(drifts: { testId: string, firstHalfAvg:
     return `<section class="panel">${heading}${table}</section>`;
 }
 
+// function to render and return teh HTML to generate the entire dashboard page
 export function renderPage(overviewContent: string, runsContent: string, runDetailContent: string, testDetailContent: string): string {
     const tabScript = `<script>
       const tabButtons = document.querySelectorAll(".tab-btn");
@@ -177,6 +180,7 @@ tr:hover { background: #232329; }
     </html>`;
 }
 
+// function to render the runs table from the calculatePassRates function
 export function renderRunsTable(runs: RunMetadata[]): string {
     const rows = runs.map((run) => {
     return `<tr onclick="location.hash = '#/runs/${run.runId}'" style="cursor:pointer">
@@ -195,6 +199,7 @@ export function renderRunsTable(runs: RunMetadata[]): string {
     return `<section class='panel'>${heading}${table}</section>`;
 }
 
+// function to set up the run details block of the dashboard
 export function renderRunDetail(runs: RunMetadata[]): string {
     const blocks = runs.map((run) => {
          return `<div class="tab-content run-detail-block" id="run-detail-${run.runId}" style="display:none">
@@ -213,7 +218,7 @@ export function renderRunDetail(runs: RunMetadata[]): string {
     return blocks;
 }
 
-
+// function to set up the test details block of the dashboard. Test details shown at the flaky leaderboard chart links
 export function renderTestDetail(entries: TrendEntry[]): string {
     const latestByTestId = new Map<string, TrendEntry>();
     for (const entry of entries) {

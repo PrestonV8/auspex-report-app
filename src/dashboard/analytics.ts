@@ -38,6 +38,7 @@ export function calculatePassRates(grouped: Record<string, TrendEntry[]>): Recor
     return passRates;
 }
 
+// helper function to calculate the average pass rate of all runs
 export function calculateAveragePassRate(passRates: Record<string, number>): number {
     const values = Object.values(passRates);
 
@@ -81,7 +82,7 @@ export function calculateFlakyLeaderboard(grouped: Record<string, TrendEntry[]>)
     return top15Results;
 }
 
-
+// function to calculate the duration drift of the tests
 export function calculateDurationDrift(entries: Record<string, TrendEntry[]>): { testId: string, firstHalfAvg: number, lastHalfAvg: number, percentChange: number }[] {
     const results = [];
     for (const testId in entries) {
