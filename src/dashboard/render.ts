@@ -111,18 +111,18 @@ export function renderPage(overviewContent: string, runsContent: string, runDeta
       }
 
       function handleRoute() {
-        const hash = location.hash.replace("#/", "");
+      const hash = location.hash.replace("#/", "").split("&")[0];
 
-        if (hash.startsWith("runs/")) {
-          const runId = hash.replace("runs/", "");
-          showTab("run-detail-" + runId, true);
-        } else if (hash.startsWith("tests/")) {
-          const testId = hash.replace("tests/", "");
-          showTab("test-detail-" + testId, true);
-        } else {
-          showTab(hash || "overview");
-        }
+      if (hash.startsWith("runs/")) {
+        const runId = hash.replace("runs/", "");
+        showTab("run-detail-" + runId, true);
+      } else if (hash.startsWith("tests/")) {
+        const testId = hash.replace("tests/", "");
+        showTab("test-detail-" + testId, true);
+      } else {
+        showTab(hash || "overview");
       }
+    }
 
       tabButtons.forEach((button) => {
         button.addEventListener("click", () => {
@@ -201,6 +201,11 @@ export function renderRunsTable(runs: RunMetadata[]): string {
     <table><tbody id="runsTableBody"></tbody></table>
     <script>
       const allRuns = ${runsJson};
+      if (location.hash.includes("locked=1")) {
+      document.getElementById("statusFilter").style.display = "none";
+      document.getElementById("envFilter").style.display = "none";
+      document.getElementById("saveFiltersBtn").style.display = "none";
+    }
 
       function renderRows() {
         const statusValue = document.getElementById("statusFilter").value;
