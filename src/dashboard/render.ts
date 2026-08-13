@@ -197,6 +197,7 @@ export function renderRunsTable(runs: RunMetadata[]): string {
       <option value="UAT">UAT</option>
       <option value="unknown">Unknown</option>
     </select>
+    <button id="saveFiltersBtn">Save Filters</button>
     <table><tbody id="runsTableBody"></tbody></table>
     <script>
       const allRuns = ${runsJson};
@@ -231,6 +232,17 @@ export function renderRunsTable(runs: RunMetadata[]): string {
 
       document.getElementById("statusFilter").addEventListener("change", renderRows);
       document.getElementById("envFilter").addEventListener("change", renderRows);
+
+      document.getElementById("saveFiltersBtn").addEventListener("click", () => {
+        localStorage.setItem("statusFilter", document.getElementById("statusFilter").value);
+        localStorage.setItem("envFilter", document.getElementById("envFilter").value);
+        alert("Filters saved!");
+      });
+
+      const savedStatus = localStorage.getItem("statusFilter");
+      const savedEnv = localStorage.getItem("envFilter");
+      if (savedStatus) document.getElementById("statusFilter").value = savedStatus;
+      if (savedEnv) document.getElementById("envFilter").value = savedEnv;
 
       renderRows();
     </script>`;
