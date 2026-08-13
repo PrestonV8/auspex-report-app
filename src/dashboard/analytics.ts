@@ -54,7 +54,7 @@ export function calculateAveragePassRate(passRates: Record<string, number>): num
 
 
 // function to build the calculate the flakyness of the tests
-export function calculateFlakyLeaderboard(grouped: Record<string, TrendEntry[]>): { testId: string, flakyCount: number, failCount: number }[] {
+export function calculateFlakyLeaderboard(grouped: Record<string, TrendEntry[]>): { testId: string, title: string, flakyCount: number, failCount: number }[] {
     const results = [];
     
     for (const testId in grouped) {
@@ -70,8 +70,11 @@ export function calculateFlakyLeaderboard(grouped: Record<string, TrendEntry[]>)
             return entry.status === "failed" || entry.status === "timedOut"
         }).length;
 
+        // setting up the test run name
+        const testTitle = entries[0].title.split(" > ").pop() || testId;
+
         // add as an object into the results array
-        results.push({testId, flakyCount, failCount})
+        results.push({testId, title: testTitle, flakyCount, failCount})
     }
 
     results.sort((a,b) => (b.flakyCount + b.failCount) - (a.flakyCount + a.failCount));
