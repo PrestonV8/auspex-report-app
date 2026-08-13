@@ -194,7 +194,7 @@ tr:hover { background: #232329; }
 .panel table { box-shadow: none; }
 .panel h2 { font-size: 1.15rem; margin-bottom: 12px; color: #f4f4f5; font-weight: 700; }
 .panel p { margin-bottom: 12px; color: #e4e4e7; }
-.test-link-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.test-link-list { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
 .test-link-box { display: block; padding: 10px 16px; background: #232329; border: 1px solid #2e2e35; border-radius: 8px; color: #e4e4e7; text-decoration: none; font-size: 0.9rem; transition: background 0.15s ease, border-color 0.15s ease; }
 .test-link-box:hover { background: #2a2a31; border-color: #60a5fa; }
     </style>

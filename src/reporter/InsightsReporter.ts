@@ -54,7 +54,7 @@ export default class InsightsReporter implements Reporter {
             status: result.status,
             retries: result.retry,
             workerIndex: result.workerIndex,
-            tags: test.tags,
+            tags: [...new Set([...test.tags, ...(test.title.match(/@\w+/g) || [])])],
             project: test.parent.project()?.name ?? "unknown",
             title: test.titlePath().join(" > "),
             runId: this.runId,

@@ -4,3 +4,4 @@ dist/
 test-results/
 src/dashboard/insights.html
 tests/
+data/
