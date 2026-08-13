@@ -48,9 +48,11 @@ const tagBreakdownTable = renderTagBreakdown(tagBreakdown);
 
 const kpiRow = renderKPIRow(averagePassRate, Object.keys(passRates).length, avgDurations);
 
+const overallAvgDuration = Object.values(avgDurations).reduce((sum, value) => sum + value, 0) / Object.values(avgDurations).length;
+
 // Generating the full dashboard
 const dashboardContent = kpiRow + passRateTable + flakyLeaderboard + durationDriftTable + avgDurationChart + slowStepsTable + tagBreakdownTable;
-const dashboard = renderPage(dashboardContent, runsTable, runDetailBlocks, testDetailBlocks);
+const dashboard = renderPage(dashboardContent, runsTable, runDetailBlocks, testDetailBlocks, Math.round(averagePassRate), Object.keys(passRates).length, Math.round(overallAvgDuration / 1000));
 
 fs.writeFileSync(`./src/dashboard/insights.html`, dashboard);
 
@@ -74,9 +76,5 @@ if (shouldOpen === true) {
     }
 
     exec(`${command} ./src/dashboard/insights.html`);
-}
-
-function calculateAverageDurations(groupedTests: Record<string, TrendEntry[]>) {
-    throw new Error("Function not implemented.");
 }
 

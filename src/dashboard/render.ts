@@ -86,9 +86,12 @@ export function renderDurationDriftTable(drifts: { testId: string, firstHalfAvg:
 }
 
 // function to render and return teh HTML to generate the entire dashboard page
-export function renderPage(overviewContent: string, runsContent: string, runDetailContent: string, testDetailContent: string): string {
+export function renderPage(overviewContent: string, runsContent: string, runDetailContent: string, testDetailContent: string, averagePassRate: number, runCount: number, avgDuration: number): string {
     const tabScript = `<script>
       const tabButtons = document.querySelectorAll(".tab-btn");
+      const averagePassRate = ${averagePassRate};
+      const runCount = ${runCount};
+      const avgDuration = ${avgDuration};
 
       function showTab(targetId, isDynamic) {
         document.querySelectorAll(".tab-content").forEach((tab) => {
@@ -131,13 +134,13 @@ export function renderPage(overviewContent: string, runsContent: string, runDeta
       });
 
       function downloadReport(htmlContent, filename) {
-  const blob = new Blob([htmlContent], { type: "text/html" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  link.click();
-}
+      const blob = new Blob([htmlContent], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+    }
 
       document.getElementById("shareBtn").addEventListener("click", () => {
         let url = location.href;
@@ -148,6 +151,14 @@ export function renderPage(overviewContent: string, runsContent: string, runDeta
           alert("Link copied! Recipients will see a locked, read-only view.");
         });
       });
+
+      document.getElementById("emailSummaryBtn").addEventListener("click", () => {
+      const summary = "Test Run Summary\\nAverage Pass Rate: " + averagePassRate + "%\\nTotal Runs: " + runCount + "\\nAverage Duration: " + avgDuration + "s";
+
+      navigator.clipboard.writeText(summary).then(() => {
+        alert("Summary copied! Paste it into your email.");
+      });
+    });
 
       window.addEventListener("hashchange", handleRoute);
       handleRoute();
@@ -185,6 +196,7 @@ tr:hover { background: #232329; }
     <header class="app-header">
     <h1>Auspex</h1>
     <button id="shareBtn">Share View</button>
+    <button id="emailSummaryBtn">Email Summary</button>
     </header>
     <nav class="tabs">
     <button class="tab-btn active" data-tab="overview">Overview</button>
