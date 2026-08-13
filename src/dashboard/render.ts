@@ -130,6 +130,15 @@ export function renderPage(overviewContent: string, runsContent: string, runDeta
         });
       });
 
+      function downloadReport(htmlContent, filename) {
+  const blob = new Blob([htmlContent], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+}
+
       document.getElementById("shareBtn").addEventListener("click", () => {
         let url = location.href;
         if (!url.includes("locked=1")) {
@@ -271,7 +280,26 @@ export function renderRunsTable(runs: RunMetadata[]): string {
 // function to set up the run details block of the dashboard
 export function renderRunDetail(runs: RunMetadata[]): string {
     const blocks = runs.map((run) => {
-         return `<div class="tab-content run-detail-block" id="run-detail-${run.runId}" style="display:none">
+        const reportHtml = `<html><head><title>${run.runId}</title>
+<style>body{font-family:sans-serif;background:#0d0d0f;color:#e4e4e7;padding:24px;}
+h2{color:#f4f4f5;} p{margin-bottom:8px;}</style></head><body>
+<h2>Run Report — ${run.runId}</h2>
+<p>Date: ${run.date}</p>
+<p>Status: ${run.runStatus}</p>
+<p>Duration: ${Math.round(run.durationMs / 1000)}s</p>
+<h3>Environment</h3>
+<p>Environment: ${run.environment.Environment ?? "N/A"}</p>
+<p>Branch: ${run.environment.Branch ?? "N/A"}</p>
+<h3>Executor</h3>
+<p>Name: ${run.executor.name ?? "N/A"}</p>
+<p>Type: ${run.executor.type ?? "N/A"}</p>
+<h3>Totals</h3>
+<p>${run.totals.passed} passed, ${run.totals.failed} failed, ${run.totals.flaky} flaky, ${run.totals.skipped} skipped, ${run.totals.timedOut} timedOut</p>
+</body></html>`;
+
+        const reportHtmlEscaped = JSON.stringify(reportHtml);
+
+        return `<div class="tab-content run-detail-block" id="run-detail-${run.runId}" style="display:none">
                 <section class="panel">
                     <h2>Run Detail — ${run.runId}</h2>
                     <p>Date: ${run.date}</p>
@@ -280,6 +308,7 @@ export function renderRunDetail(runs: RunMetadata[]): string {
                     <p>Environment: ${run.environment.Environment ?? "N/A"} (${run.environment.Branch ?? "N/A"})</p>
                     <p>Executor: ${run.executor.name} (${run.executor.type})</p>
                     <p>Totals: ${run.totals.passed} passed, ${run.totals.failed} failed, ${run.totals.flaky} flaky, ${run.totals.skipped} skipped, ${run.totals.timedOut} timedOut</p>
+                    <button onclick='downloadReport(${reportHtmlEscaped}, "${run.runId}.html")'>Download Report</button>
                 </section>
                 </div>`;
     }).join("");
