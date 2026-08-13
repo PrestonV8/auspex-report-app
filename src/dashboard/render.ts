@@ -43,30 +43,30 @@ export function renderFlakyLeaderboard(results: { testId: string, title: string,
     };
     const chartDataJson = JSON.stringify(chartData);
 
-        const chartScript = `<canvas id="flakyChart"></canvas>
-        <script>
-        const flakyChartData = ${chartDataJson};
-        new Chart(document.getElementById("flakyChart"), {
-          type: "bar",
-          options: {
-            indexAxis: "y",
-            scales: { x: { beginAtZero: true } }
-          },
-          data: {
-            labels: flakyChartData.labels,
-            datasets: [
-              { label: "Flaky Count", data: flakyChartData.flakyCounts },
-              { label: "Fail Count", data: flakyChartData.failCounts }
-            ]
-          }
-        });
-        </script>`;
+    const chartScript = `<canvas id="flakyChart"></canvas>
+<script>
+const flakyChartData = ${chartDataJson};
+new Chart(document.getElementById("flakyChart"), {
+  type: "bar",
+  options: {
+    indexAxis: "y",
+    scales: { x: { beginAtZero: true } }
+  },
+  data: {
+    labels: flakyChartData.labels,
+    datasets: [
+      { label: "Flaky Count", data: flakyChartData.flakyCounts },
+      { label: "Fail Count", data: flakyChartData.failCounts }
+    ]
+  }
+});
+</script>`;
 
     const testLinks = results.map((entry) => {
-        return `<p><a href="#/tests/${entry.testId}" style="color:#60a5fa">${entry.title}</a></p>`;
+        return `<a href="#/tests/${entry.testId}" class="test-link-box">${entry.title}</a>`;
     }).join("");
 
-    return `<section class="panel">${heading}${chartScript}${testLinks}</section>`;
+    return `<section class="panel">${heading}${chartScript}<div class="test-link-list">${testLinks}</div></section>`;
 }
 
 // function to render the duration drift table from the calculateDurationDrift function
@@ -194,6 +194,9 @@ tr:hover { background: #232329; }
 .panel table { box-shadow: none; }
 .panel h2 { font-size: 1.15rem; margin-bottom: 12px; color: #f4f4f5; font-weight: 700; }
 .panel p { margin-bottom: 12px; color: #e4e4e7; }
+.test-link-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.test-link-box { display: block; padding: 10px 16px; background: #232329; border: 1px solid #2e2e35; border-radius: 8px; color: #e4e4e7; text-decoration: none; font-size: 0.9rem; transition: background 0.15s ease, border-color 0.15s ease; }
+.test-link-box:hover { background: #2a2a31; border-color: #60a5fa; }
     </style>
     </head>
     <body>
