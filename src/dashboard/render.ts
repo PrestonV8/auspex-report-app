@@ -32,7 +32,16 @@ new Chart(document.getElementById("passRateChart"), {
 export function renderFlakyLeaderboard(results: { testId: string, flakyCount: number, failCount: number }[]): string {
     const heading = `<h2>Flaky Leaderboard</h2>`;
 
-    const labels = results.map((entry) => entry.testId);
+    function shortenLabel(testId: string): string {
+        return testId
+            .replace(/^([a-z]+)-\1-tests?/i, "")
+            .replace(/^-+/, "")
+            .replace(/\.spec\.ts-?/i, " ")
+            .replace(/-/g, " ")
+            .trim();
+    }
+
+    const labels = results.map((entry) => shortenLabel(entry.testId));
     const flakyCounts = results.map((entry) => entry.flakyCount);
     const failCounts = results.map((entry) => entry.failCount);
 
@@ -48,6 +57,10 @@ export function renderFlakyLeaderboard(results: { testId: string, flakyCount: nu
 const flakyChartData = ${chartDataJson};
 new Chart(document.getElementById("flakyChart"), {
   type: "bar",
+  options: {
+    indexAxis: "y",
+    scales: { x: { beginAtZero: true } }
+  },
   data: {
     labels: flakyChartData.labels,
     datasets: [
@@ -59,7 +72,7 @@ new Chart(document.getElementById("flakyChart"), {
 </script>`;
 
     const testLinks = results.map((entry) => {
-        return `<p><a href="#/tests/${entry.testId}" style="color:#60a5fa">${entry.testId}</a></p>`;
+        return `<p><a href="#/tests/${entry.testId}" style="color:#60a5fa">${shortenLabel(entry.testId)}</a></p>`;
     }).join("");
 
     return `<section class="panel">${heading}${chartScript}${testLinks}</section>`;

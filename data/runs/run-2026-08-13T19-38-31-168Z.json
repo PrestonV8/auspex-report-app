@@ -1,0 +1,1 @@
+{"runId":"run-2026-08-13T19-38-31-168Z","date":"2026-08-13","ts":"2026-08-13T19:38:31.168Z","endTs":"2026-08-13T19:38:36.654Z","durationMs":5486,"runStatus":"passed","environment":{"Environment":"unknown","Branch":"unknown"},"executor":{"name":"unknown","type":"unknown","buildName":"unknown"},"totals":{"total":2,"passed":2,"failed":0,"flaky":0,"skipped":0,"timedOut":0}}
