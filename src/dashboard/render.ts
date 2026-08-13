@@ -111,22 +111,32 @@ export function renderPage(overviewContent: string, runsContent: string, runDeta
       }
 
       function handleRoute() {
-      const hash = location.hash.replace("#/", "").split("&")[0];
+        const hash = location.hash.replace("#/", "").split("&")[0];
 
-      if (hash.startsWith("runs/")) {
-        const runId = hash.replace("runs/", "");
-        showTab("run-detail-" + runId, true);
-      } else if (hash.startsWith("tests/")) {
-        const testId = hash.replace("tests/", "");
-        showTab("test-detail-" + testId, true);
-      } else {
-        showTab(hash || "overview");
+        if (hash.startsWith("runs/")) {
+          const runId = hash.replace("runs/", "");
+          showTab("run-detail-" + runId, true);
+        } else if (hash.startsWith("tests/")) {
+          const testId = hash.replace("tests/", "");
+          showTab("test-detail-" + testId, true);
+        } else {
+          showTab(hash || "overview");
+        }
       }
-    }
 
       tabButtons.forEach((button) => {
         button.addEventListener("click", () => {
           location.hash = "#/" + button.dataset.tab;
+        });
+      });
+
+      document.getElementById("shareBtn").addEventListener("click", () => {
+        let url = location.href;
+        if (!url.includes("locked=1")) {
+          url += url.includes("#") ? "&locked=1" : "#locked=1";
+        }
+        navigator.clipboard.writeText(url).then(() => {
+          alert("Link copied! Recipients will see a locked, read-only view.");
         });
       });
 
@@ -143,8 +153,9 @@ export function renderPage(overviewContent: string, runsContent: string, runDeta
     <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: "Segoe UI", system-ui, sans-serif; background: #0d0d0f; color: #e4e4e7; }
-.app-header { background: #CC0000; color: #fff; padding: 20px 32px; }
+.app-header { background: #CC0000; color: #fff; padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; }
 .app-header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
+.app-header button { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.4); border-radius: 6px; padding: 8px 14px; cursor: pointer; font-size: 0.85rem; }
 .tabs { display: flex; gap: 4px; background: #16161a; padding: 0 32px; border-bottom: 1px solid #2a2a31; }
 .tab-btn { background: none; border: none; color: #9ca3af; padding: 14px 18px; font-size: 0.95rem; cursor: pointer; border-bottom: 2px solid transparent; }
 .tab-btn.active { color: #fff; border-bottom-color: #CC0000; }
@@ -164,6 +175,7 @@ tr:hover { background: #232329; }
     <body>
     <header class="app-header">
     <h1>Auspex</h1>
+    <button id="shareBtn">Share View</button>
     </header>
     <nav class="tabs">
     <button class="tab-btn active" data-tab="overview">Overview</button>
@@ -206,6 +218,7 @@ export function renderRunsTable(runs: RunMetadata[]): string {
       document.getElementById("envFilter").style.display = "none";
       document.getElementById("saveFiltersBtn").style.display = "none";
     }
+
 
       function renderRows() {
         const statusValue = document.getElementById("statusFilter").value;
