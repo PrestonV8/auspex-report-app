@@ -276,6 +276,10 @@ tr:hover { background: #2f3145; }
 .modal-download-btn:hover { background: #9d3fdb; }
 .filter-select { background: #262838; color: #f1f2f7; border: 1px solid #8b2fc9; border-radius: 6px; padding: 8px 14px; font-size: 0.85rem; cursor: pointer; }
 .filter-select:hover { border-color: #9d3fdb; }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.kpi-card { background: #262838; border: 1px solid #34364a; border-radius: 12px; padding: 16px 20px; }
+.kpi-label { color: #9a9cb5; font-size: 0.8rem; margin-bottom: 6px; font-weight: 600; }
+.kpi-value { color: #f1f2f7; font-size: 1.6rem; font-weight: 700; margin: 0; }
     </style>
     </head>
     <body>
@@ -560,13 +564,20 @@ export function renderKPIRow(averagePassRate: number, runCount: number, avgDurat
   const avgDurationValues = Object.values(avgDurations);
   const overallAvgDuration = avgDurationValues.reduce((sum, val) => sum + val, 0) / avgDurationValues.length;
 
-    return `<section class="panel">
-            <div style="display:flex; gap:32px; flex-wrap:wrap;">
-                <div><p style="margin-bottom:4px; color:#9ca3af; font-size:0.85rem;">Avg Pass Rate</p><h2>${Math.round(averagePassRate)}%</h2></div>
-                <div><p style="margin-bottom:4px; color:#9ca3af; font-size:0.85rem;">Total Runs</p><h2>${runCount}</h2></div>
-                <div><p style="margin-bottom:4px; color:#9ca3af; font-size:0.85rem;">Avg Duration</p><h2>${Math.round(overallAvgDuration / 1000)}s</h2></div>
+    return `<div class="kpi-grid">
+            <div class="kpi-card">
+                <p class="kpi-label">Avg Pass Rate</p>
+                <h2 class="kpi-value">${Math.round(averagePassRate)}%</h2>
             </div>
-            </section>`;
+            <div class="kpi-card">
+                <p class="kpi-label">Total Runs</p>
+                <h2 class="kpi-value">${runCount}</h2>
+            </div>
+            <div class="kpi-card">
+                <p class="kpi-label">Average Duration</p>
+                <h2 class="kpi-value">${Math.round(overallAvgDuration / 1000)}s</h2>
+            </div>
+            </div>`;
 }
 
 
