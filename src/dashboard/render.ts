@@ -15,6 +15,21 @@ export function renderPassRateTable(passRates: Record<string, number>, averagePa
 const passRateData = ${chartDataJson};
 new Chart(document.getElementById("passRateChart"), {
   type: "line",
+  options: {
+    scales: {
+      x: {
+        ticks: { color: "#cfd0e0" }
+      },
+      y: {
+        ticks: { color: "#cfd0e0" }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: { color: "#cfd0e0" }
+      }
+    }
+  },
   data: {
     labels: passRateData.labels,
     datasets: [{
