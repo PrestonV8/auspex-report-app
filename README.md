@@ -7,6 +7,18 @@ This is a light-weight Playwright report dashboard. Users will be able to see th
 
 ## Features:
 KPI Row
+Pass Rate Over Time
+Average Test Duration per Run 
+Tag Breakdown
+Flaky Test Leaderboard
+Duration Drift
+Slowest Steps
+Execuation History
+Save Filters 
+Share View
+Download Report
+Email Summary
+Locked mode
 
 ## Test Commands:
 For running all the playwright tests in the environment
