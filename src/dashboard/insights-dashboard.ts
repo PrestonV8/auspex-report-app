@@ -1,9 +1,9 @@
 import minimist from "minimist";
 import { loadTrendEntries, loadRuns } from "./loadData.js";
-import { groupEntries, calculatePassRates, calculateAveragePassRate, calculateFlakyLeaderboard, calculateDurationDrift, calculateAverageDurationPerRun, calculateSlowSteps, calculateTagBreakdown } from "./analytics.js";
+import { groupEntries, calculatePassRates, calculateAveragePassRate, calculateFlakyLeaderboard, calculateDurationDrift, calculateAverageDurationPerRun, calculateSlowSteps, calculateTagBreakdown, calculateFailuresAndFlakyPerRun } from "./analytics.js";
 import fs from "node:fs";
 import { exec } from "node:child_process";
-import { renderPassRateTable, renderPage, renderFlakyLeaderboard, renderRunsTable, renderRunDetail, renderTestDetail, renderDurationDriftTable, renderAvgDurationChart, renderSlowSteps, renderTagBreakdown, renderKPIRow } from "./render.js";
+import { renderPassRateTable, renderPage, renderFlakyLeaderboard, renderRunsTable, renderRunDetail, renderTestDetail, renderDurationDriftTable, renderAvgDurationChart, renderSlowSteps, renderTagBreakdown, renderKPIRow, renderFailuresAndFlakyChart } from "./render.js";
 import { TrendEntry } from "../shared/types.js";
 
 
@@ -48,10 +48,13 @@ const tagBreakdownTable = renderTagBreakdown(tagBreakdown);
 
 const kpiRow = renderKPIRow(averagePassRate, Object.keys(passRates).length, avgDurations);
 
+const failuresAndFlaky = calculateFailuresAndFlakyPerRun(groupedRuns);
+const failuresAndFlakyChart = renderFailuresAndFlakyChart(failuresAndFlaky)
+
 const overallAvgDuration = Object.values(avgDurations).reduce((sum, value) => sum + value, 0) / Object.values(avgDurations).length;
 
 // Generating the full dashboard
-const dashboardContent = kpiRow + passRateTable + flakyLeaderboard + durationDriftTable + avgDurationChart + slowStepsTable + tagBreakdownTable;
+const dashboardContent = kpiRow + passRateTable + flakyLeaderboard + durationDriftTable + avgDurationChart + slowStepsTable + tagBreakdownTable + failuresAndFlakyChart;
 const dashboard = renderPage(dashboardContent, runsTable, runDetailBlocks, testDetailBlocks, Math.round(averagePassRate), Object.keys(passRates).length, Math.round(overallAvgDuration / 1000));
 
 fs.writeFileSync(`./src/dashboard/insights.html`, dashboard);

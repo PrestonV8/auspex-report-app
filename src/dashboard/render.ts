@@ -538,6 +538,50 @@ export function renderKPIRow(averagePassRate: number, runCount: number, avgDurat
             </section>`;
 }
 
+
+// function to render the test failures and flaky chart
+export function renderFailuresAndFlakyChart(data: { runId: string, failedCount: number, flakyCount: number}[]): string {
+  const heading = `<h2>Failures and Flaky per Run</h2>`;
+
+  const labels = data.map((entry) => entry.runId);
+  const failedCounts = data.map((entry) => entry.failedCount);
+  const flakyCounts = data.map((entry) => entry.failedCount);
+
+  const chartData = {
+    labels: labels,
+    failedCounts: failedCounts,
+    flakyCounts: flakyCounts
+  };
+
+  const chartDataJson = JSON.stringify(chartData);
+
+  const chartScript = `<canvas id="failuresFlakyChart"></canvas>
+  <script>
+  const failuresFlakyData = ${chartDataJson};
+  new Chart(document.getElementById("failuresFlakyChart"), {
+    type: "bar",
+    options: {
+      scales: {
+        x: { stacked: true, ticks: { color: "#cfd0e0" } },
+        y: { stacked: true, beginAtZero: true, ticks: { color: "#cfd0e0", stepSize: 1, precision: 0 } }
+      },
+      plugins: {
+        legend: { labels: { color: "#cfd0e0" } }
+      }
+    },
+    data: {
+      labels: failuresFlakyData.labels,
+      datasets: [
+        { label: "Failed", data: failuresFlakyData.failedCounts, backgroundColor: "#E24B4A" },
+        { label: "Flaky", data: failuresFlakyData.flakyCounts, backgroundColor: "#FAC775" }
+      ]
+    }
+  });
+  </script>`;
+
+  return `<section class="panel">${heading}${chartScript}</section>`;
+}
+
 // helper function to strip the tags from the test title for dashboard display
 function stripTagsFromTitle(title: string): string {
   return title.replace(/\s*@\w+/g, "").trim();

@@ -203,3 +203,23 @@ export function calculateTagBreakdown(entries: TrendEntry[]): { tag: string, pas
 
     return results;
 }
+
+export function calculateFailuresAndFlakyPerRun(grouped: Record<string, TrendEntry[]>): { runId: string, failedCount: number, flakyCount: number }[] {
+    const results = [];
+
+    for (const runId in grouped) {
+        const entries = grouped[runId];
+
+        const failedCount = entries.filter((entry) => {
+            return entry.status === "failed" || entry.status === "timedOut";
+        }).length;
+
+        const flakyCount = entries.filter((entry) => {
+            return entry.flaky === true;
+        }).length;
+
+        results.push({ runId, failedCount, flakyCount});
+    }
+
+    return results;
+}
