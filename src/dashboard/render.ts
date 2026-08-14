@@ -507,21 +507,50 @@ export function renderSlowSteps(steps: {title: string, avgDurationMs: number }[]
 export function renderTagBreakdown(tags: { tag: string, passed: number, failed: number }[]): string {
     const heading = `<h2>Tag Breakdown</h2>`;
 
-    const headerRow = `<tr><th>Tag</th>
-                      <th>Passed</th>
-                      <th>Failed</th></tr>`;
+    const labels = tags.map((entry) => entry.tag);
+    const passedCounts = tags.map((entry) => entry.passed);
+    const failedCounts = tags.map((entry) => entry.failed);
 
-    const rows = tags.map((entry) => {
-        return `<tr>
-                <td>${entry.tag}</td>
-                <td>${entry.passed}</td>
-                <td>${entry.failed}</td>
-                </tr>`;
-    }).join("");
+    const chartData = {
+      labels: labels,
+      passedCounts: passedCounts,
+      failedCounts: failedCounts
+    };
+    const chartDataJson = JSON.stringify(chartData);
 
-    const table = `<table>${headerRow}${rows}</table>`;
+    const chartScript = `<canvas id="tagBreakdownChart"></canvas>
+    <script>
+    const tagBreakdownData = ${chartDataJson};
+    new Chart(document.getElementById("tagBreakdownChart"), {
+      type: "bar",
+      options: {
+        indexAxis: "y",
+        scales: {
+          x: {
+            beginAtZero: true,
+            title: { display: true, text: "Test Count", color: "#cfd0e0" },
+            ticks: { color: "#cfd0e0", stepSize: 1, precision: 0, maxRotation: 0, minRotation: 0 }
+          },
+          y: {
+            title: { display: true, text: "Test Tag", color: "#cfd0e0" },
+            ticks: { color: "#cfd0e0" }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: "#cfd0e0" } }
+        }
+      },
+      data: {
+        labels: tagBreakdownData.labels,
+        datasets: [
+          { label: "Passed", data: tagBreakdownData.passedCounts, backgroundColor: "#639922" },
+          { label: "Failed", data: tagBreakdownData.failedCounts, backgroundColor: "#E24B4A" }
+        ]
+      }
+    });
+    </script>`;
 
-    return `<section class="panel">${heading}${table}</section>`;
+    return `<section class="panel">${heading}${chartScript}</section>`;
 }
 
 // function to render the KPI row

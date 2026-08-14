@@ -54,7 +54,7 @@ const failuresAndFlakyChart = renderFailuresAndFlakyChart(failuresAndFlaky)
 const overallAvgDuration = Object.values(avgDurations).reduce((sum, value) => sum + value, 0) / Object.values(avgDurations).length;
 
 // Generating the full dashboard
-const dashboardContent = kpiRow + passRateTable + flakyLeaderboard + durationDriftTable + avgDurationChart + slowStepsTable + tagBreakdownTable + failuresAndFlakyChart;
+const dashboardContent = kpiRow + passRateTable+ failuresAndFlakyChart + avgDurationChart + tagBreakdownTable + flakyLeaderboard + durationDriftTable  + slowStepsTable;
 const dashboard = renderPage(dashboardContent, runsTable, runDetailBlocks, testDetailBlocks, Math.round(averagePassRate), Object.keys(passRates).length, Math.round(overallAvgDuration / 1000));
 
 fs.writeFileSync(`./src/dashboard/insights.html`, dashboard);
