@@ -86,7 +86,7 @@ export function calculateFlakyLeaderboard(grouped: Record<string, TrendEntry[]>)
 }
 
 // function to calculate the duration drift of the tests
-export function calculateDurationDrift(entries: Record<string, TrendEntry[]>): { testId: string, firstHalfAvg: number, lastHalfAvg: number, percentChange: number }[] {
+export function calculateDurationDrift(entries: Record<string, TrendEntry[]>): { testId: string, title: string, firstHalfAvg: number, lastHalfAvg: number, percentChange: number }[] {
     const results = [];
     for (const testId in entries) {
         const testEntries = entries[testId];
@@ -112,7 +112,8 @@ export function calculateDurationDrift(entries: Record<string, TrendEntry[]>): {
 
         // check with 10% threshold, if the percent change is greater than or equal to 10% then add it to the results array
         if (Math.abs(percentChange) >= 10) {
-            results.push({ testId, firstHalfAvg, lastHalfAvg, percentChange });
+            const title = testEntries[0].title.split(" > ").pop() || testId;
+            results.push({ testId, title, firstHalfAvg, lastHalfAvg, percentChange });
         }
     }
 

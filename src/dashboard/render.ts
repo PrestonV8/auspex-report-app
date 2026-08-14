@@ -70,14 +70,14 @@ new Chart(document.getElementById("flakyChart"), {
 }
 
 // function to render the duration drift table from the calculateDurationDrift function
-export function renderDurationDriftTable(drifts: { testId: string, firstHalfAvg: number, lastHalfAvg: number, percentChange: number }[]): string {
+export function renderDurationDriftTable(drifts: { testId: string, title: string, firstHalfAvg: number, lastHalfAvg: number, percentChange: number }[]): string {
     const heading = `<h2>Duration Drift</h2>`;
 
     const rows = drifts.map((drift) => {
       const direction = drift.percentChange > 0 ? "slower" : "faster";
       const color = drift.percentChange > 0 ? "red" : "green";
       return `<tr>
-                <td>${drift.testId}</td>
+                <td>${stripTagsFromTitle(drift.title)}</td>
                 <td>${Math.round(drift.firstHalfAvg)}ms</td>
                 <td>${Math.round(drift.lastHalfAvg)}ms</td>
                 <td style="color:${color}">${Math.abs(Math.round(drift.percentChange))}% ${direction}</td>
