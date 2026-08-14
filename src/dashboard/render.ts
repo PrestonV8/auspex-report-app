@@ -49,9 +49,19 @@ const flakyChartData = ${chartDataJson};
 new Chart(document.getElementById("flakyChart"), {
   type: "bar",
   options: {
-    indexAxis: "y",
-    scales: { x: { beginAtZero: true } }
-  },
+  indexAxis: "y",
+  scales: {
+    x: {
+      beginAtZero: true,
+      title: { display: true, text: "Count", color: "#cfd0e0" },
+    ticks: { color: "#cfd0e0" }
+    },
+    y: {
+      title: { display: true, text: "Test", color: "#cfd0e0" },
+    ticks: { color: "#cfd0e0" }
+    }
+  }
+},
   data: {
     labels: flakyChartData.labels,
     datasets: [
@@ -425,6 +435,10 @@ export function renderSlowSteps(steps: {title: string, avgDurationMs: number }[]
 export function renderTagBreakdown(tags: { tag: string, passed: number, failed: number }[]): string {
     const heading = `<h2>Tag Breakdown</h2>`;
 
+    const headerRow = `<tr><th>Tag</th>
+                      <th>Passed</th>
+                      <th>Failed</th></tr>`;
+
     const rows = tags.map((entry) => {
         return `<tr>
                 <td>${entry.tag}</td>
@@ -433,7 +447,7 @@ export function renderTagBreakdown(tags: { tag: string, passed: number, failed: 
                 </tr>`;
     }).join("");
 
-    const table = `<table>${rows}</table>`;
+    const table = `<table>${headerRow}${rows}</table>`;
 
     return `<section class="panel">${heading}${table}</section>`;
 }
