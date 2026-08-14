@@ -214,7 +214,7 @@ tr:hover { background: #2f3145; }
     <button class="tab-btn" data-tab="runs">Runs</button>
     </nav>
     <main class="page">
-    <div class="tab-content" id="overview-tab">${overviewContent}</div>
+    <div class="tab-content dashboard-grid" id="overview-tab">${overviewContent}</div>
     <div class="tab-content" id="runs-tab" style="display:none">${runsContent}</div>
     ${runDetailContent}
     ${testDetailContent}
