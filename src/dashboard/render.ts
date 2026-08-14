@@ -69,7 +69,7 @@ new Chart(document.getElementById("flakyChart"), {
     x: {
       beginAtZero: true,
       title: { display: true, text: "Count", color: "#cfd0e0" },
-    ticks: { color: "#cfd0e0" }
+    ticks: { color: "#cfd0e0", stepSize: 1, precision: 0 }
     },
     y: {
       title: { display: true, text: "Test", color: "#cfd0e0" },
