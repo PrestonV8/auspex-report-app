@@ -3,7 +3,7 @@ import { RunMetadata, TrendEntry } from "../shared/types.js";
 // function to render the pass rate table from the calculatePassRates function
 export function renderPassRateTable(passRates: Record<string, number>, averagePassRate: number): string {
     const runCount = Object.keys(passRates).length;
-    const headline = `<p>Average pass rate across ${runCount} runs: ${Math.round(averagePassRate)}%</p>`;
+    const headline = `<p>Average Pass Rate Across ${runCount} Runs: ${Math.round(averagePassRate)}%</p>`;
 
     const chartData = {
         labels: Object.keys(passRates),
