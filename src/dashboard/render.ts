@@ -142,12 +142,43 @@ export function renderPage(overviewContent: string, runsContent: string, runDeta
         }
       }
 
+      function openRunModal(runId) {
+      const run = runDetailsData.find((r) => r.runId === runId);
+      if (!run) return;
+
+      document.getElementById("runModalBody").innerHTML =
+        "<table style='width:100%'>" +
+        "<tr><td style='color:#9a9cb5;padding:6px 0'>Run ID</td><td style='color:#f1f2f7;text-align:right'>" + run.runId + "</td></tr>" +
+        "<tr><td style='color:#9a9cb5;padding:6px 0'>Date</td><td style='color:#f1f2f7;text-align:right'>" + run.date + "</td></tr>" +
+        "<tr><td style='color:#9a9cb5;padding:6px 0'>Status</td><td style='color:#f1f2f7;text-align:right'>" + run.status + "</td></tr>" +
+        "<tr><td style='color:#9a9cb5;padding:6px 0'>Duration</td><td style='color:#f1f2f7;text-align:right'>" + run.duration + "s</td></tr>" +
+        "<tr><td style='color:#9a9cb5;padding:6px 0'>Environment</td><td style='color:#f1f2f7;text-align:right'>" + run.environment + " (" + run.branch + ")</td></tr>" +
+        "<tr><td style='color:#9a9cb5;padding:6px 0'>Executor</td><td style='color:#f1f2f7;text-align:right'>" + run.executorName + " (" + run.executorType + ")</td></tr>" +
+        "<tr><td style='color:#9a9cb5;padding:6px 0'>Totals</td><td style='color:#f1f2f7;text-align:right'>" + run.totals.passed + " passed, " + run.totals.failed + " failed, " + run.totals.flaky + " flaky</td></tr>" +
+        "</table>" +
+        "<div class='modal-footer'><button id='modalDownloadBtn'>Download report</button></div>";
+
+      document.getElementById("modalDownloadBtn").addEventListener("click", () => {
+        downloadReport(run.reportHtml, run.runId + ".html");
+      });
+
+      document.getElementById("runModalBackdrop").classList.add("active");
+      location.hash = "#/runs/" + runId;
+    }
+      function closeRunModal() {
+        document.getElementById("runModalBackdrop")?.classList.remove("active");
+        if (location.hash.startsWith("#/runs/")) {
+          location.hash = "#/runs";
+        }
+      }
+
       function handleRoute() {
         const hash = location.hash.replace("#/", "").split("&")[0];
 
         if (hash.startsWith("runs/")) {
           const runId = hash.replace("runs/", "");
-          showTab("run-detail-" + runId, true);
+          showTab("runs");
+          openRunModal(runId);
         } else if (hash.startsWith("tests/")) {
           const testId = hash.replace("tests/", "");
           showTab("test-detail-" + testId, true);
@@ -163,13 +194,13 @@ export function renderPage(overviewContent: string, runsContent: string, runDeta
       });
 
       function downloadReport(htmlContent, filename) {
-      const blob = new Blob([htmlContent], { type: "text/html" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = filename;
-      link.click();
-    }
+        const blob = new Blob([htmlContent], { type: "text/html" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        link.click();
+      }
 
       document.getElementById("shareBtn").addEventListener("click", () => {
         let url = location.href;
@@ -182,12 +213,12 @@ export function renderPage(overviewContent: string, runsContent: string, runDeta
       });
 
       document.getElementById("emailSummaryBtn").addEventListener("click", () => {
-      const summary = "Test Run Summary\\nAverage Pass Rate: " + averagePassRate + "%\\nTotal Runs: " + runCount + "\\nAverage Duration: " + avgDuration + "s";
+        const summary = "Test Run Summary\\nAverage Pass Rate: " + averagePassRate + "%\\nTotal Runs: " + runCount + "\\nAverage Duration: " + avgDuration + "s";
 
-      navigator.clipboard.writeText(summary).then(() => {
-        alert("Summary copied! Paste it into your email.");
+        navigator.clipboard.writeText(summary).then(() => {
+          alert("Summary copied! Paste it into your email.");
+        });
       });
-    });
 
       window.addEventListener("hashchange", handleRoute);
       handleRoute();
@@ -226,6 +257,15 @@ tr:hover { background: #2f3145; }
 .test-link-list { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 .test-link-box { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: #2a2b3d; border: 1px solid #34364a; border-radius: 8px; color: #f1f2f7; text-decoration: none; font-size: 0.9rem; transition: background 0.15s ease, border-color 0.15s ease; }
 .test-link-box:hover { background: #323450; border-color: #8b2fc9; }
+.modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.55); align-items: center; justify-content: center; z-index: 100; }
+.modal-backdrop.active { display: flex; }
+.modal-card { width: 420px; background: #262838; border: 1px solid #34364a; border-radius: 12px; padding: 24px 28px; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.modal-header h2 { color: #f1f2f7; font-size: 1.1rem; font-weight: 700; margin: 0; }
+.modal-close { color: #9a9cb5; cursor: pointer; font-size: 1.3rem; background: none; border: none; }
+.modal-body { border-top: 1px solid #34364a; padding-top: 14px; }
+.modal-body table { font-size: 0.85rem; }
+.modal-footer { margin-top: 18px; display: flex; justify-content: flex-end; }
     </style>
     </head>
     <body>
@@ -239,6 +279,15 @@ tr:hover { background: #2f3145; }
     <button class="tab-btn" data-tab="runs">Runs</button>
     </nav>
     <main class="page">
+    <div class="modal-backdrop" id="runModalBackdrop" onclick="if(event.target === this) closeRunModal()">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2>Run details</h2>
+      <button class="modal-close" onclick="closeRunModal()">×</button>
+    </div>
+    <div class="modal-body" id="runModalBody"></div>
+  </div>
+</div>
     <div class="tab-content dashboard-grid" id="overview-tab">${overviewContent}</div>
     <div class="tab-content" id="runs-tab" style="display:none">${runsContent}</div>
     ${runDetailContent}
@@ -327,8 +376,8 @@ export function renderRunsTable(runs: RunMetadata[]): string {
 
 // function to set up the run details block of the dashboard
 export function renderRunDetail(runs: RunMetadata[]): string {
-    const blocks = runs.map((run) => {
-        const reportHtml = `<html><head><title>${run.runId}</title>
+    const runDetails = runs.map((run) => {
+    const reportHtml = `<html><head><title>${run.runId}</title>
 <style>body{font-family:sans-serif;background:#0d0d0f;color:#e4e4e7;padding:24px;}
 h2{color:#f4f4f5;} p{margin-bottom:8px;}</style></head><body>
 <h2>Run Report — ${run.runId}</h2>
@@ -345,23 +394,23 @@ h2{color:#f4f4f5;} p{margin-bottom:8px;}</style></head><body>
 <p>${run.totals.passed} passed, ${run.totals.failed} failed, ${run.totals.flaky} flaky, ${run.totals.skipped} skipped, ${run.totals.timedOut} timedOut</p>
 </body></html>`;
 
-        const reportHtmlEscaped = JSON.stringify(reportHtml);
+        return {
+            runId: run.runId,
+            date: run.date,
+            status: run.runStatus,
+            duration: Math.round(run.durationMs / 1000),
+            environment: run.environment.Environment ?? "N/A",
+            branch: run.environment.Branch ?? "N/A",
+            executorName: run.executor.name ?? "N/A",
+            executorType: run.executor.type ?? "N/A",
+            totals: run.totals,
+            reportHtml: reportHtml
+        };
+    });
 
-        return `<div class="tab-content run-detail-block" id="run-detail-${run.runId}" style="display:none">
-                <section class="panel">
-                    <h2>Run Detail — ${run.runId}</h2>
-                    <p>Date: ${run.date}</p>
-                    <p>Status: ${run.runStatus}</p>
-                    <p>Duration: ${Math.round(run.durationMs / 1000)}s</p>
-                    <p>Environment: ${run.environment.Environment ?? "N/A"} (${run.environment.Branch ?? "N/A"})</p>
-                    <p>Executor: ${run.executor.name} (${run.executor.type})</p>
-                    <p>Totals: ${run.totals.passed} passed, ${run.totals.failed} failed, ${run.totals.flaky} flaky, ${run.totals.skipped} skipped, ${run.totals.timedOut} timedOut</p>
-                    <button onclick='downloadReport(${reportHtmlEscaped}, "${run.runId}.html")'>Download Report</button>
-                </section>
-                </div>`;
-    }).join("");
+    const runDetailsJson = JSON.stringify(runDetails);
 
-    return blocks;
+    return `<script>const runDetailsData = ${runDetailsJson};</script>`;
 }
 
 // function to set up the test details block of the dashboard. Test details shown at the flaky leaderboard chart links
