@@ -274,6 +274,8 @@ tr:hover { background: #2f3145; }
 .modal-footer { margin-top: 18px; display: flex; justify-content: flex-end; }
 .modal-download-btn { background: #8b2fc9; color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-size: 0.85rem; cursor: pointer; transition: background 0.15s ease; }
 .modal-download-btn:hover { background: #9d3fdb; }
+.filter-select { background: #262838; color: #f1f2f7; border: 1px solid #8b2fc9; border-radius: 6px; padding: 8px 14px; font-size: 0.85rem; cursor: pointer; }
+.filter-select:hover { border-color: #9d3fdb; }
     </style>
     </head>
     <body>
@@ -312,18 +314,18 @@ export function renderRunsTable(runs: RunMetadata[]): string {
 
     const runsJson = JSON.stringify(runs);
 
-    const filterScript = `<select id="statusFilter">
+    const filterScript = `<select id="statusFilter" class="filter-select">
       <option value="all">All Statuses</option>
       <option value="passed">Passed</option>
       <option value="failed">Failed</option>
       <option value="timedOut">Timed Out</option>
     </select>
-    <select id="envFilter">
+    <select id="envFilter" class="filter-select">
       <option value="all">All Environments</option>
       <option value="UAT">UAT</option>
       <option value="unknown">Unknown</option>
     </select>
-    <button id="saveFiltersBtn">Save Filters</button>
+    <button id="saveFiltersBtn" class="modal-download-btn">Save Filters</button>
     <table><tbody id="runsTableBody"></tbody></table>
     <script>
       const allRuns = ${runsJson};
