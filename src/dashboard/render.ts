@@ -144,19 +144,25 @@ export function renderPage(overviewContent: string, runsContent: string, runDeta
 
       function openRunModal(runId) {
       const run = runDetailsData.find((r) => r.runId === runId);
-      if (!run) return;
+      
+      if (!run) {
+      return;
+      }
+
+      const statusColor = run.status === "passed" ? "#639922" : "#E24B4A";
+      const statusText = run.status.toUpperCase();
 
       document.getElementById("runModalBody").innerHTML =
         "<table style='width:100%'>" +
         "<tr><td style='color:#9a9cb5;padding:6px 0'>Run ID</td><td style='color:#f1f2f7;text-align:right'>" + run.runId + "</td></tr>" +
         "<tr><td style='color:#9a9cb5;padding:6px 0'>Date</td><td style='color:#f1f2f7;text-align:right'>" + run.date + "</td></tr>" +
-        "<tr><td style='color:#9a9cb5;padding:6px 0'>Status</td><td style='color:#f1f2f7;text-align:right'>" + run.status + "</td></tr>" +
+        "<tr><td style='color:#9a9cb5;padding:6px 0'>Status</td><td style='color:" + statusColor + ";text-align:right;font-weight:600'>" + statusText + "</td></tr>" +
         "<tr><td style='color:#9a9cb5;padding:6px 0'>Duration</td><td style='color:#f1f2f7;text-align:right'>" + run.duration + "s</td></tr>" +
         "<tr><td style='color:#9a9cb5;padding:6px 0'>Environment</td><td style='color:#f1f2f7;text-align:right'>" + run.environment + " (" + run.branch + ")</td></tr>" +
         "<tr><td style='color:#9a9cb5;padding:6px 0'>Executor</td><td style='color:#f1f2f7;text-align:right'>" + run.executorName + " (" + run.executorType + ")</td></tr>" +
         "<tr><td style='color:#9a9cb5;padding:6px 0'>Totals</td><td style='color:#f1f2f7;text-align:right'>" + run.totals.passed + " passed, " + run.totals.failed + " failed, " + run.totals.flaky + " flaky</td></tr>" +
         "</table>" +
-        "<div class='modal-footer'><button id='modalDownloadBtn'>Download report</button></div>";
+        "<div class='modal-footer'><button id='modalDownloadBtn' class='modal-download-btn'>Download report</button></div>";
 
       document.getElementById("modalDownloadBtn").addEventListener("click", () => {
         downloadReport(run.reportHtml, run.runId + ".html");
@@ -266,6 +272,8 @@ tr:hover { background: #2f3145; }
 .modal-body { border-top: 1px solid #34364a; padding-top: 14px; }
 .modal-body table { font-size: 0.85rem; }
 .modal-footer { margin-top: 18px; display: flex; justify-content: flex-end; }
+.modal-download-btn { background: #8b2fc9; color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-size: 0.85rem; cursor: pointer; transition: background 0.15s ease; }
+.modal-download-btn:hover { background: #9d3fdb; }
     </style>
     </head>
     <body>
