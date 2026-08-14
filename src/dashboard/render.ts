@@ -32,7 +32,7 @@ new Chart(document.getElementById("passRateChart"), {
 export function renderFlakyLeaderboard(results: { testId: string, title: string, flakyCount: number, failCount: number }[]): string {
     const heading = `<h2>Flaky Leaderboard</h2>`;
 
-    const labels = results.map((entry) => entry.title);
+    const labels = results.map((entry) => stripTagsFromTitle(entry.title));
     const flakyCounts = results.map((entry) => entry.flakyCount);
     const failCounts = results.map((entry) => entry.failCount);
 
@@ -63,7 +63,7 @@ new Chart(document.getElementById("flakyChart"), {
 </script>`;
 
     const testLinks = results.map((entry) => {
-        return `<a href="#/tests/${entry.testId}" class="test-link-box">${entry.title}</a>`;
+        return `<a href="#/tests/${entry.testId}" class="test-link-box">${stripTagsFromTitle(entry.title)}</a>`;
     }).join("");
 
     return `<section class="panel">${heading}${chartScript}<div class="test-link-list">${testLinks}</div></section>`;
@@ -176,27 +176,31 @@ export function renderPage(overviewContent: string, runsContent: string, runDeta
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: "Segoe UI", system-ui, sans-serif; background: #0d0d0f; color: #e4e4e7; }
-.app-header { background: #CC0000; color: #fff; padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; }
+body { font-family: "Segoe UI", system-ui, sans-serif; background: #1c1d2b; color: #f1f2f7; }
+.app-header { background: #3d2a6b; color: #fff; padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; }
 .app-header h1 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; }
-.app-header button { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.4); border-radius: 6px; padding: 8px 14px; cursor: pointer; font-size: 0.85rem; }
-.tabs { display: flex; gap: 4px; background: #16161a; padding: 0 32px; border-bottom: 1px solid #2a2a31; }
-.tab-btn { background: none; border: none; color: #9ca3af; padding: 14px 18px; font-size: 0.95rem; cursor: pointer; border-bottom: 2px solid transparent; }
-.tab-btn.active { color: #fff; border-bottom-color: #CC0000; }
+.app-header button { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: 6px; padding: 8px 14px; cursor: pointer; font-size: 0.85rem; }
+.tabs { display: flex; gap: 4px; background: #20212f; padding: 0 32px; border-bottom: 1px solid #34364a; }
+.tab-btn { background: none; border: none; color: #9a9cb5; padding: 14px 18px; font-size: 0.95rem; cursor: pointer; border-bottom: 2px solid transparent; }
+.tab-btn.active { color: #fff; border-bottom-color: #8b2fc9; }
 .page { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
-p { font-size: 1.1rem; margin-bottom: 16px; font-weight: 600; color: #e4e4e7; }
+p { font-size: 1.1rem; margin-bottom: 16px; font-weight: 600; color: #f1f2f7; }
 table { width: 100%; border-collapse: collapse; background: transparent; }
-th, td { padding: 10px 16px; text-align: left; border-bottom: 1px solid #2e2e35; color: #d4d4d8; }
-th { color: #9ca3af; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; }
+th, td { padding: 10px 16px; text-align: left; border-bottom: 1px solid #34364a; color: #cfd0e0; }
+th { color: #9a9cb5; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; }
 tr:last-child td { border-bottom: none; }
-tr:hover { background: #232329; }
-.panel { background: #1a1a1f; border: 1px solid #2a2a31; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; }
+tr:hover { background: #2f3145; }
+.panel { background: #262838; border: 1px solid #34364a; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; }
 .panel table { box-shadow: none; }
-.panel h2 { font-size: 1.15rem; margin-bottom: 12px; color: #f4f4f5; font-weight: 700; }
-.panel p { margin-bottom: 12px; color: #e4e4e7; }
-.test-link-list { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
-.test-link-box { display: block; padding: 10px 16px; background: #232329; border: 1px solid #2e2e35; border-radius: 8px; color: #e4e4e7; text-decoration: none; font-size: 0.9rem; transition: background 0.15s ease, border-color 0.15s ease; }
-.test-link-box:hover { background: #2a2a31; border-color: #60a5fa; }
+.panel h2 { font-size: 1.15rem; margin-bottom: 12px; color: #f1f2f7; font-weight: 700; }
+.panel p { margin-bottom: 12px; color: #f1f2f7; }
+.accordion-item { border-bottom: 1px solid #34364a; }
+.accordion-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 4px; cursor: pointer; color: #f1f2f7; }
+.accordion-chevron { transition: transform 0.2s ease; color: #9a9cb5; }
+.accordion-body { padding: 8px 4px 16px; color: #cfd0e0; font-size: 0.9rem; }
+.test-link-list { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.test-link-box { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: #2a2b3d; border: 1px solid #34364a; border-radius: 8px; color: #f1f2f7; text-decoration: none; font-size: 0.9rem; transition: background 0.15s ease, border-color 0.15s ease; }
+.test-link-box:hover { background: #323450; border-color: #8b2fc9; }
     </style>
     </head>
     <body>
@@ -349,7 +353,7 @@ export function renderTestDetail(entries: TrendEntry[]): string {
 
       return `<div class="tab-content" id="test-detail-${entry.testId}" style="display:none">
                 <section class="panel">
-                    <h2>Test Detail — ${entry.title}</h2>
+                    <h2>Test Detail — ${stripTagsFromTitle(entry.title)}</h2>
                     <p>Status: ${entry.status}</p>
                     <p>Duration: ${Math.round(entry.duration / 1000)}s</p>
                     <p>Flaky: ${entry.flaky}</p>
@@ -446,4 +450,9 @@ export function renderKPIRow(averagePassRate: number, runCount: number, avgDurat
                 <div><p style="margin-bottom:4px; color:#9ca3af; font-size:0.85rem;">Avg Duration</p><h2>${Math.round(overallAvgDuration / 1000)}s</h2></div>
             </div>
             </section>`;
+}
+
+// helper function to strip the tags from the test title for dashboard display
+function stripTagsFromTitle(title: string): string {
+  return title.replace(/\s*@\w+/g, "").trim();
 }
