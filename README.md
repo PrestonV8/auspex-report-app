@@ -13,6 +13,26 @@ Rather than showing test results from just the last run, the project surfaces tr
 
 The intended users are QA engineers, manual testers, and anyone who wants visibility into test health over time without standing up any infrastructure. 
 
+## Setup
+1. Clone the repo
+2. Run `npm install`
+3. Add `InsightsReporter.ts` to your `playwright.config.ts`:
+
+```typescript
+    import { defineConfig } from "@playwright/test";
+
+    export default defineConfig({
+        testDir: "./tests",
+        reporter: [
+            ["list"],
+            ["./src/reporter/InsightsReporter.ts"],
+        ],
+    });
+```
+
+4. Run your tests: `npx playwright test`
+5. Generate the dashboard: `npm run insights:dashboard:open`
+
 ## Features:
 - KPI Row
 - Pass Rate Over Time
@@ -21,12 +41,18 @@ The intended users are QA engineers, manual testers, and anyone who wants visibi
 - Flaky Test Leaderboard
 - Duration Drift
 - Slowest Steps
-- Execuation History
+- Execution History
 - Save Filters 
 - Share View
 - Download Report
 - Email Summary
 - Locked mode
+- Run Details modal (dynamic per-run drill-down with Download Report)
+- Test Details Pages 
+- Failures & Flaky per Run chart
+- Client-side filtering (Status/Environment dropdowns)
+- Hash-routed navigation
+
 
 ## Test Commands:
 For running all the playwright tests in the environment
@@ -56,3 +82,6 @@ npm run insights:dashboard:open
 - HTML/CSS
 - JSONL
 - JSON
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
