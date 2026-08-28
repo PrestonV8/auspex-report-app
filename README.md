@@ -1,8 +1,9 @@
-<p align="center">
-    <img  src="assets/logo.svg" alt="Auspex logo" width="120" />
+<p>
+    <img  src="assets/logo.svg" alt="Auspex logo" width="45" align="left" />
+    <h1>Auspex Report</h1>
 </p>
 
-<h1 align="center">Auspex Report</h1>
+
 
 A zero-infrastructure test execution intelligence platform that turns raw Playwright results into actionable engineering dashboards automatically.
 
