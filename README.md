@@ -1,4 +1,8 @@
-# Auspex Report
+<p align="center">
+    <img  src="assets/logo.svg" alt="Auspex logo" width="120" />
+</p>
+
+<h1 align="center">Auspex Report</h1>
 
 Auspex Report is a tool to organize and visualize Playwright test results clean, user-friendly HTML report for any user to see
 
