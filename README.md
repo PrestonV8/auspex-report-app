@@ -1,5 +1,5 @@
 <p>
-    <img  src="assets/logo.svg" alt="Auspex logo" width="45" align="left" />
+    <img  src="assets/auspex-logo-v2_2.svg" alt="Auspex logo" width="90" align="left" />
     <h1>Auspex Report</h1>
 </p>
 
