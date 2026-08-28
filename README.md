@@ -4,10 +4,14 @@
 
 <h1 align="center">Auspex Report</h1>
 
-Auspex Report is a tool to organize and visualize Playwright test results clean, user-friendly HTML report for any user to see
+A zero-infrastructure test execution intelligence platform that turns raw Playwright results into actionable engineering dashboards automatically.
 
 ## Overview:
-This is a light-weight Playwright report dashboard. Users will be able to see their Playwright test history with their analytics and diagnostics. The intended users are QA testers and manual testers.
+This is a two-part system built on top of standard Playwright test runs. It requires no change to test code. Just register a custom reporter once. A lightweight Reporter implementation captures per-test results, timing, and step-level data as your tests run, appending them to a durable, git-committed history. A CLI generator then reads that history and produces a single, self-contained HTML dashboard. No server, no database, no deployment. 
+
+Rather than showing test results from just the last run, the project surfaces trends across your entire test history: which tests are getting slower, which ones are flaky, and where time is actually being spent, turning raw pass/fail data into answers, not just numbers.
+
+The intended users are QA engineers, manual testers, and anyone who wants visibility into test health over time without standing up any infrastructure. 
 
 ## Features:
 - KPI Row
