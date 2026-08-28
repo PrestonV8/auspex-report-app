@@ -251,7 +251,7 @@ table { width: 100%; border-collapse: collapse; background: transparent; }
 th, td { padding: 10px 16px; text-align: left; border-bottom: 1px solid #34364a; color: #cfd0e0; }
 th { color: #9a9cb5; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; }
 tr:last-child td { border-bottom: none; }
-tr:hover { background: #2f3145; }
+tbody tr:hover { background: #2f3145; }
 .panel { background: #262838; border: 1px solid #34364a; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; }
 .panel table { box-shadow: none; }
 .panel h2 { font-size: 1.15rem; margin-bottom: 12px; color: #f1f2f7; font-weight: 700; }
@@ -330,7 +330,12 @@ export function renderRunsTable(runs: RunMetadata[]): string {
       <option value="unknown">Unknown</option>
     </select>
     <button id="saveFiltersBtn" class="modal-download-btn">Save Filters</button>
-    <table><tbody id="runsTableBody"></tbody></table>
+    <table>
+    <thead>
+      <tr><th>Run ID</th><th>Date</th><th>Status</th><th>Passed</th><th>Failed</th><th>Flaky</th></tr>
+    </thead>
+    <tbody id="runsTableBody"></tbody>
+  </table>
     <script>
       const allRuns = ${runsJson};
       if (location.hash.includes("locked=1")) {
