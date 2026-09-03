@@ -280,6 +280,9 @@ tbody tr:hover { background: #2f3145; }
 .kpi-card { background: #262838; border: 1px solid #34364a; border-radius: 12px; padding: 16px 20px; }
 .kpi-label { color: #9a9cb5; font-size: 0.8rem; margin-bottom: 6px; font-weight: 600; }
 .kpi-value { color: #f1f2f7; font-size: 1.6rem; font-weight: 700; margin: 0; }
+.step-row { display: flex; align-items: center; padding: 6px 0; border-bottom: 1px solid #34364a; }
+.step-title { flex: 1; color: #f1f2f7; }
+.step-duration { color: #9a9cb5; font-size: 0.85rem; }
     </style>
     </head>
     <body>
@@ -441,8 +444,14 @@ export function renderTestDetail(entries: TrendEntry[]): string {
 
     const blocks = Array.from(latestByTestId.values()).map((entry) => {
       const stepsHtml = entry.steps.map((step) => {
-        return `<p>${step.title} — ${step.durationMs}ms</p>`;
-      }).join("");
+    const icon = entry.status === "passed" ? "✓" : "•";
+    const iconColor = entry.status === "passed" ? "#639922" : "#9a9cb5";
+    return `<div class="step-row">
+            <span style="color:${iconColor}; font-weight:700; margin-right:8px;">${icon}</span>
+            <span class="step-title">${step.title}</span>
+            <span class="step-duration">${step.durationMs}ms</span>
+            </div>`;
+}).join("");
 
       return `<div class="tab-content" id="test-detail-${entry.testId}" style="display:none">
                 <section class="panel">
@@ -467,7 +476,6 @@ export function renderTestDetail(entries: TrendEntry[]): string {
 
     return blocks;
 }
-
 
 // function to render the average duration per run
 export function renderAvgDurationChart(durations: Record<string, number>): string {
