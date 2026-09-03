@@ -15,24 +15,59 @@ Rather than showing test results from just the last run, the project surfaces tr
 The intended users are QA engineers, manual testers, and anyone who wants visibility into test health over time without standing up any infrastructure. 
 
 ## Setup
-1. Clone the repo
-2. Run `npm install`
-3. Add `InsightsReporter.ts` to your `playwright.config.ts`:
+## Use Auspex in Your Own Project
 
-```typescript
-    import { defineConfig } from "@playwright/test";
+Auspex isn't yet published as an npm package — for now, integrating it into your own project means manually copying its source files and wiring up a few things. (Publishing as a proper npm package is a planned future improvement.)
 
-    export default defineConfig({
-        testDir: "./tests",
-        reporter: [
-            ["list"],
-            ["./src/reporter/InsightsReporter.ts"],
-        ],
-    });
+### 1. Copy the source files
+From a cloned copy of this repo, copy these folders into your own project's root:
+- `src/reporter/` — the test reporter
+- `src/shared/` — shared types and helpers (required by the reporter)
+- `src/dashboard/` — optional, only needed if you want the dashboard generator too
+
+### 2. Install required dependencies
+```bash
+npm install strip-ansi slugify minimist tsx
+npm install @types/node --save-dev
 ```
 
-4. Run your tests: `npx playwright test`
-5. Generate the dashboard: `npm run insights:dashboard:open`
+### 3. Update your `tsconfig.json`
+The reporter uses `.js`-extension imports (NodeNext module resolution) and needs Node types available:
+```jsonc
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"]
+  }
+}
+```
+
+### 4. Register the reporter in `playwright.config.ts`
+Add it to your existing reporter list, and make sure `testDir` is explicitly set:
+```typescript
+export default defineConfig({
+  testDir: "./tests", // set this to your actual tests folder
+  reporter: [
+    ["list"],
+    ["./src/reporter/InsightsReporter.ts"],
+  ],
+});
+```
+
+### 5. Add dashboard scripts to `package.json`
+```json
+"scripts": {
+  "insights:dashboard": "npx tsx src/dashboard/insights-dashboard.ts",
+  "insights:dashboard:open": "npx tsx src/dashboard/insights-dashboard.ts --open"
+}
+```
+
+### 6. Run it
+```bash
+npx playwright test
+npm run insights:dashboard:open
+```
 
 ## Features:
 - KPI Row
