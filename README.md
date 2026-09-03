@@ -15,9 +15,7 @@ Rather than showing test results from just the last run, the project surfaces tr
 The intended users are QA engineers, manual testers, and anyone who wants visibility into test health over time without standing up any infrastructure. 
 
 ## Setup
-## Use Auspex in Your Own Project
-
-Auspex isn't yet published as an npm package — for now, integrating it into your own project means manually copying its source files and wiring up a few things. (Publishing as a proper npm package is a planned future improvement.)
+Auspex isn't yet published as an npm package, for now, integrating it into your own project means manually copying its source files and wiring up a few things. (Publishing as a proper npm package is a planned future improvement.)
 
 ### 1. Copy the source files
 From a cloned copy of this repo, copy these folders into your own project's root:
